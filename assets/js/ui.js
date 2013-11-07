@@ -1,0 +1,811 @@
+/**************************************************************************/
+/************************************|*************************************/
+/**************************************************************************/
+/**
+ * @author Michael Risher
+ */
+var APP_URL = '';
+$(document).ready(function(){
+    APP_URL = $('meta[name="url"]').attr('content');
+})
+
+/**************************************************************************/
+/**********************************delete terms****************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.termDelete').submit(function(event){
+        event.preventDefault();
+        var clicked = $(this);
+        var proceed = confirm('Are you sure you want to delete the term "' + clicked.parent('p').find('span').html() + '"');
+
+        if(proceed){
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'termDelete',
+                    'termId' : $(this).attr('termId')
+                },
+                'success' : function(data, x, s){
+                    if( !data['errors'] ){
+                        createSuccessBanner('Term has been deleted successfully!');
+                        clicked.parent('p').slideUp(550, function(){
+                            $(this).remove();
+                        });
+                    }
+                    else{
+                        createSuccessBanner('Term can\'t be deleted try again later', data['info']);
+                    }
+                }
+            });
+        }
+    });
+});
+/**************************************************************************/
+/************************************add terms*****************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.addTermForm').submit(function(event){
+        event.preventDefault();
+        var p = $('.addTermForm');
+        var term = p.find('[name=term]').val();
+        var meaning = p.find('[name=meaning]').val();
+
+        var input = [ ( (checkRegex( term, 'custom',  /^(.){1,50}/g) == null) ? (false) : (true) ), ( ((checkRegex( meaning, 'custom',  /^(.){1,50}/g) == null) ? (false) : (true) ) )];
+        var proceed = false;
+        if( input[0] ){
+            p.find('[name=term]').removeClass('errorInput');
+
+        }
+        else{
+            p.find('[name=term]').addClass('errorInput');
+        }
+        if ( input[1] ) {
+            p.find('[name=meaning]').removeClass('errorInput');
+        }
+        else {
+            p.find('[name=meaning]').addClass('errorInput');
+        }
+
+        if( input[0] && input[1]){
+            proceed=true;
+        }
+
+
+        //TODO do checks
+        //console.log(true);
+
+        if(proceed){
+            console.log(p.find('[name=term]'));
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'addTerm',
+                    'term' : p.find('[name=term]').val(),
+                    'meaning' : p.find('[name=meaning]').val(),
+                    'section' : p.find('[name=section]').val()
+                },
+                'success' : function(data, x, s){
+                    if( !data['errors'] ){
+                        createSuccessBanner('Term has been added successfully!');
+                        p.find('[name=term]').val('');
+                        p.find('[name=meaning]').val('');
+                        var str = '<p><span class="bold" style="text-transform:capitalize;">' + data['term'] + '</span>: ' + data['meaning'] + '<br>';
+                        str += 'Section: ' + data['section'] + '<br>';
+                        str += '<span class="termDelete">Can\'t delete refresh page first</span>';
+                        $('.terms').append(str);
+                    }
+                }
+            });
+        }
+    });
+});
+/**************************************************************************/
+/*********************************Calendar*********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.day').on('mouseenter', function(){
+        if ( $(this).hasClass('event') ) {
+            $(this).css('backgroundColor', 'rgba(163, 3, 3, 0.89)');
+        }
+        else{
+            $(this).css('backgroundColor', '#353434');
+        }
+    });
+
+    $('.day').on('mouseleave', function(){
+        if ( $(this).hasClass('event') ) {
+            $(this).css('backgroundColor', 'rgba(128, 1, 1, 0.89)');
+        }
+        else {
+            $(this).css('backgroundColor', '#201F1F');
+        }
+    });
+
+    var changeTooltipPosition = function(event) {
+        var tooltipX = event.pageX - 40;
+        var tooltipY = event.pageY + 8;
+        $('div.tooltip').css({top: tooltipY, left: tooltipX});
+    };
+
+    var showTooltip = function(event) {
+        var id = $(this).attr('eventId');
+        $('div.tooltip').remove();
+        $('body').append('<div class="tooltip">' +
+            'Event: ' + EVENTS[id]['name'] + '<br>' +
+            'Start time: ' + getHumanTime( EVENTS[id]['start_time'] ) + '<br>' +
+            'End time: ' + getHumanTime( EVENTS[id]['end_time'] ) + '<br>' +
+//            'Double click for info' +
+            '</div>');
+        changeTooltipPosition(event);
+    };
+
+    var hideTooltip = function() {
+        $('div.tooltip').remove();
+    };
+
+    $('.day.event').bind({
+        mousemove : changeTooltipPosition,
+        mouseenter : showTooltip,
+        mouseleave: hideTooltip
+    });
+
+    $('.day.event').on({
+        'click' : function(){
+            goTo( getApp_Dir('templates/event.php?id=' + $(this).attr('eventId')) );
+
+        }
+    })
+});
+/**************************************************************************/
+/********************************Login Form********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.loginForm input').on({
+        'keyup' : function(){
+            var regexType = $(this).attr('data-type');
+            if( checkRegex( $(this).val(), regexType, $('.loginForm') ) ){
+                if( $(this).hasClass('errorInput') ){
+                    $(this).removeClass('errorInput');
+                }
+            }
+            else{
+                $(this).addClass('errorInput');
+            }
+        }
+    });
+
+    $('.loginForm').submit(function(event){
+        event.preventDefault();
+        var inputs = $('[type=text], [type=password]', '.loginForm');
+        var hasError = false;
+        var errorBox = $('.loginForm #errors');
+        errorBox.html('');
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs.eq(i);
+            if( checkRegex( input.val(), input.attr('data-type') ) ){
+                if( input.hasClass('errorInput') ){
+                    input.removeClass('errorInput');
+                }
+            }
+            else{
+                hasError = true;
+                input.addClass('errorInput');
+                if( input.attr('data-type').match(/conf/) ){
+                    errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                }
+                else{
+                    errorBox.append( input.attr('placeholder') +' '+  regex[input.attr('data-type')]['error'] + '<br/>')
+                }
+            }
+        }
+        if( hasError ){
+            errorBox.slideDown('slow');
+        }
+        else{
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'login',
+                    'username' : inputs.filter('[name=username]').val(),
+                    'password' : inputs.filter('[name=password]').val()
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    console.log(typeof data);
+                    var e = false;
+                    for(var x in data){
+                        if(x != 'login' ){
+                            if(data[x] == false ){
+                                errorBox.append( x +' ' + regex[x]['error'] + '<br/>');
+                                e = true;
+                            }
+                        }
+                        else {
+                            if( !data[x]){
+                                errorBox.append( 'Username or Password was wrong<br/>');
+                                e = true;
+                            }
+
+                        }
+                    }
+                    if (e) {
+                        errorBox.slideDown('slow');
+                    }
+                    else{
+                        goTo(getApp_Dir('books/'))
+                    }
+                }
+            });
+        }
+    });
+});
+/**************************************************************************/
+/******************************Contact Form********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('input, textarea', '.contactForm').on({
+        'keyup' : function(){
+            var regexType = $(this).attr('data-type');
+            if( checkRegex( $(this).val(), regexType ) ){
+                if( $(this).hasClass('errorInput') ){
+                    $(this).removeClass('errorInput');
+                }
+            }
+            else{
+                $(this).addClass('errorInput');
+            }
+        }
+    });
+
+    $('[name=phone]', '.contactForm').blur(function() {
+        var returned = checkRegex( $(this).val(), $(this).attr('data-type') );
+        if( returned ){
+            clog( returned );
+            var str = ( (returned[2]=='') ? ('1') : (returned[2]) ) + ' (' + returned[3] + ') ' + returned[4] + '-' + returned[5];
+            $(this).val(str);
+        }
+    });
+
+    $('.contactForm').submit(function(event){
+        event.preventDefault();
+        var inputs = $('[type=text], [type=password], textarea', '.contactForm');
+        var hasError = false;
+        var errorBox = $('.contactForm #errors');
+        errorBox.html('');
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs.eq(i);
+            if( checkRegex( input.val(), input.attr('data-type') ) ){
+                if( input.hasClass('errorInput') ){
+                    input.removeClass('errorInput');
+                }
+            }
+            else{
+                hasError = true;
+                input.addClass('errorInput');
+                if( input.attr('data-type').match(/conf/) ){
+                    errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                }
+                else{
+                    errorBox.append( input.attr('placeholder') +' '+  getRegex( input.attr('data-type') )['error'] + '<br/>')
+                }
+            }
+        }
+        if( hasError ){
+            errorBox.slideDown('slow');
+        }
+        else{
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'contact',
+                    'name' : inputs.filter('[name=username]').val(),
+                    'email' : inputs.filter('[name=email]').val(),
+                    'phone' : inputs.filter('[name=phone]').val(),
+                    'extension' : inputs.filter('[name=extension]').val(),
+                    'message' : inputs.filter('[name=message]').val()
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    console.log(typeof data);
+                    var e = false;
+                    for(var x in data){
+                        if(data[x] == false ){
+                            errorBox.append( x +' ' + regex[x]['error'] + '<br/>');
+                            e = true;
+                        }
+                    }
+                    if (e) {
+                        errorBox.slideDown('slow');
+                    }
+                    else{
+                        createSuccessBanner('Sent your message successfully.<br>We will get back to you as soon as possible.');
+                        clearForm(inputs);
+                    }
+                }
+            });
+        }
+    });
+});
+/**************************************************************************/
+/***************************Add admin users********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.addUserForm input').on({
+        'keyup' : function(){
+            var regexType = $(this).attr('data-type');
+            if( checkRegex( $(this).val(), regexType, $('.addUserForm') ) ){
+                if( $(this).hasClass('errorInput') ){
+                    $(this).removeClass('errorInput');
+                }
+            }
+            else{
+                $(this).addClass('errorInput');
+            }
+        }
+    });
+
+    $('.addUserForm').submit(function(event){
+    event.preventDefault();
+        var inputs = $('[type=text], [type=password]', '.addUserForm');
+        var hasError = false;
+        var errorBox = $('.addUserForm #errors');
+        errorBox.html('');
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs.eq(i);
+            if( checkRegex( input.val(), input.attr('data-type'), $('.addUserForm') ) ){
+                if( input.hasClass('errorInput') ){
+                    input.removeClass('errorInput');
+                }
+            }
+            else{
+                hasError = true;
+                input.addClass('errorInput');
+                if( input.attr('data-type').match(/conf/) ){
+                    errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                }
+                else{
+                    errorBox.append( input.attr('placeholder') +' '+  regex[input.attr('data-type')]['error'] + '<br/>')
+                }
+            }
+        }
+        if( hasError ){
+            errorBox.slideDown('slow');
+        }
+        else{
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'addUser',
+                    'username' : inputs.filter('[name=username]').val(),
+                    'password' : inputs.filter('[name=password]').val(),
+                    'email' : inputs.filter('[name=email]').val()
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    console.log(typeof data);
+                    var e = false;
+                    for(var x in data){
+                        if(x != 'login' ){
+                            if(data[x] == false ){
+                                errorBox.append( x +' ' + regex[x]['error'] + '<br/>');
+                                e = true;
+                            }
+                        }
+                        else {
+                            if( !data[x]){
+                                errorBox.append( 'Username already exists<br/>');
+                                inputs.filter('[name=username]').addClass('errorInput');
+                                e = true;
+                            }
+
+                        }
+                    }
+                    if (e) {
+                        errorBox.slideDown('slow');
+                    }
+                    else{
+                        createSuccessBanner('User added successfully');
+                        $('.users').append('<div class="user">'+
+                            '<div class="floatleft width20" >' +  inputs.filter('[name=username]').val() + '</div>'+
+                            '<div class="floatleft width25" >' +  inputs.filter('[name=email]').val() + '</div>'+
+                            '<div class="floatleft width10" >None</div>'+
+                            '<div class="floatleft width15" >None</div>'+
+                            '<div class="floatleft width15" >None</div>'+
+                            '<div class="floatleft width5" ></div>'+
+                            '<div class="clear"></div>'+
+                            '</div>');
+                        for(var i = 0; i < inputs.length; i++){
+                            inputs.eq(i).val('');
+                        }
+
+                    }
+                }
+            });
+        }
+    });
+});
+/**************************************************************************/
+/**********************************delete users****************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.userDelete').on({
+        'click' : function(){
+            var clicked = $(this);
+            var proceed = confirm('Are you sure you want to delete the user "' + clicked.attr('data-name') + '"');
+
+            if(proceed){
+                $.ajax({
+                    'url' : getApp_Dir('libraries/Actions.php'),
+                    'type' : 'post',
+                    'dataType' : 'json',
+                    'data' : {
+                        'header' : 'userDelete',
+                        'userId' : $(this).attr('userId')
+                    },
+                    'success' : function(data, x, s){
+                        if( !data['errors'] ){
+                            createSuccessBanner('User has been deleted successfully!');
+                            clicked.parent('.user').slideUp(550, function(){
+                                $(this).remove();
+                            });
+                        }
+                        else{
+                            createSuccessBanner('User can\'t be deleted try again later', data['info']);
+                        }
+                    }
+                });
+            }
+        }
+    });
+});
+/**************************************************************************/
+/******************************Add Events**********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('input, textarea', '.addEventForm').on({
+        'keyup' : function(){
+            var regexType = $(this).attr('data-type');
+            if( checkRegex( $(this).val(), regexType, $('.addEventForm') ) ){
+                if( $(this).hasClass('errorInput') ){
+                    $(this).removeClass('errorInput');
+                }
+            }
+            else{
+                $(this).addClass('errorInput');
+            }
+        }
+    });
+
+    $('.addEventForm').submit(function(event){
+    event.preventDefault();
+        var inputs = $('[type=text], [type=password], [type=date], [type=time], textarea', '.addEventForm');
+        var hasError = false;
+        var errorBox = $('.addEventForm #errors');
+        errorBox.html('');
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs.eq(i);
+            if( checkRegex( input.val(), input.attr('data-type'), $('.addEventForm') ) ){
+                clog(input.val());
+                if( input.hasClass('errorInput') ){
+                    input.removeClass('errorInput');
+                }
+            }
+            else{
+                hasError = true;
+                input.addClass('errorInput');
+                if( input.attr('data-type').match(/conf/) ){
+                    errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                }
+                else{
+                    errorBox.append( input.attr('placeholder') +' '+  getRegex( input.attr('data-type') )['error'] + '<br/>')
+                }
+            }
+        }
+        if( hasError ){
+            errorBox.slideDown('slow');
+        }
+        else{
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'addEvent',
+                    'name' : inputs.filter('[name=name]').val(),
+                    'description' : inputs.filter('[name=description]').val(),
+                    'date' : inputs.filter('[name=date]').val(),
+                    'endTime' : inputs.filter('[name=endTime]').val(),
+                    'startTime' : inputs.filter('[name=startTime]').val()
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    var e = false;
+                    for(var x in data){
+                        if(x != 'login' ){
+                            if(data[x] == false ){
+                                errorBox.append( x +' ' + regex[x]['error'] + '<br/>');
+                                e = true;
+                            }
+                        }
+                        else {
+                            if( !data[x]){
+                                errorBox.append( 'Username already exists<br/>');
+                                inputs.filter('[name=username]').addClass('errorInput');
+                                e = true;
+                            }
+
+                        }
+                    }
+                    if (e) {
+                        errorBox.slideDown('slow');
+                    }
+                    else{
+                        $('.events').append('<div class="event">'+
+                            '<div class="floatleft width20" >' +  inputs.filter('[name=name]').val() + '</div>'+
+                            '<div class="floatleft width25" >' +  inputs.filter('[name=description]').val() + '</div>'+
+                            '<div class="floatleft width10" >' +  inputs.filter('[name=date]').val() + '</div>'+
+                            '<div class="floatleft width15" >' +  inputs.filter('[name=startTime]').val() + '</div>'+
+                            '<div class="floatleft width15" >' +  inputs.filter('[name=endTime]').val() + '</div>'+
+                            '<div class="floatleft width5" ></div>'+
+                            '<div class="clear"></div>'+
+                            '</div>');
+                        createSuccessBanner('Event added successfully');
+                        for(var i = 0; i < inputs.length; i++){
+                            inputs.eq(i).val('');
+                        }
+
+                    }
+                }
+            });
+        }
+    });
+});
+/**************************************************************************/
+/*********************************delete events****************************/
+/**************************************************************************/
+$(document).ready(function(){
+    $('.eventDelete').on({
+        'click' : function(){
+            var clicked = $(this);
+            var proceed = confirm('Are you sure you want to delete the event "' + clicked.attr('data-name') + '"');
+
+            if(proceed){
+                $.ajax({
+                    'url' : getApp_Dir('libraries/Actions.php'),
+                    'type' : 'post',
+                    'dataType' : 'json',
+                    'data' : {
+                        'header' : 'eventDelete',
+                        'eventId' : $(this).attr('eventId')
+                    },
+                    'success' : function(data, x, s){
+                        if( !data['errors'] ){
+                            createSuccessBanner('Event has been deleted successfully!');
+                            clicked.parent('.event').slideUp(550, function(){
+                                $(this).remove();
+                            });
+                        }
+                        else{
+                            createSuccessBanner('Event can\'t be deleted try again later', data['info']);
+                        }
+                    }
+                });
+            }
+        }
+    });
+});
+/**************************************************************************/
+/******************************view messages*******************************/
+/**************************************************************************/
+$(document).ready(function(){
+    var parentTable = $('.messages');
+    $('.message', parentTable).click(function(){
+        var id = $(this).attr('messageId');
+        parentTable.find('.fullMessage[messageid=' + id + ']').slideToggle();
+    });
+
+
+    $('.markRead').on({
+        'click' : function(){
+            var clicked = $(this);
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'readMessage',
+                    'messageId' : $(this).parent().attr('messageid')
+                },
+                'success' : function(data, x, s){
+                    createSuccessBanner('Marked as Read');
+                    $('[messageid=' +  clicked.parent().attr('messageid') + ']').filter('tr').removeClass('unread').addClass('read')
+                }
+            });
+        }
+    });
+
+    $('.messageDelete').on({
+        'click' : function(){
+            var clicked = $(this);
+            var proceed = confirm('Are you sure you want to delete the message');
+            if ( proceed ) {
+                $.ajax({
+                    'url' : getApp_Dir('libraries/Actions.php'),
+                    'type' : 'post',
+                    'dataType' : 'json',
+                    'data' : {
+                        'header' : 'deleteMessage',
+                        'messageId' : $(this).parent().attr('messageid')
+                    },
+                    'success' : function(data, x, s){
+                        createSuccessBanner('Message Deleted');
+                        $('[messageid=' +  clicked.parent().attr('messageid') + ']').fadeOut(520, function(){
+                            $(this).remove();
+                        });
+
+                    }
+                });
+            }
+        }
+    });
+});
+
+/**************************************************************************/
+/******************************add student ********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    var parent = $('.signUpForm');
+    $('input, textarea', parent).on({
+        'keyup' : function(){
+            var regexType = $(this).attr('data-type');
+            if( checkRegex( $(this).val(), regexType, parent ) ){
+                if( $(this).hasClass('errorInput') ){
+                    $(this).removeClass('errorInput');
+                }
+            }
+            else{
+                $(this).addClass('errorInput');
+            }
+        }
+    });
+
+    //phone field formatter
+    $('[name=phone]', parent).blur(function() {
+        var returned = checkRegex( $(this).val(), $(this).attr('data-type') );
+        if( returned ){
+            clog( returned );
+            var str = ( (returned[2]=='') ? ('1') : (returned[2]) ) + ' (' + returned[3] + ') ' + returned[4] + '-' + returned[5];
+            $(this).val(str);
+        }
+    });
+
+    parent.submit(function(event){
+        event.preventDefault();
+        var inputs = $('input, textarea', parent);
+        var hasError = false;
+        var errorBox = $('#errors', parent);
+        errorBox.html('');
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs.eq(i);
+            if( checkRegex( input.val(), input.attr('data-type'), $('.addEventForm') ) ){
+                clog(input.val());
+                if( input.hasClass('errorInput') ){
+                    input.removeClass('errorInput');
+                }
+            }
+            else{
+                hasError = true;
+                input.addClass('errorInput');
+                if( input.attr('data-type').match(/conf/) ){
+                    errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                }
+                else{
+                    errorBox.append( input.attr('placeholder') +' '+  getRegex( input.attr('data-type') )['error'] + '<br/>')
+                }
+            }
+        }
+
+        //check radio is selected
+
+        if( typeof inputs.filter('[name=whoFor]:checked').val() == 'undefined'){
+            hasError = true;
+            errorBox.append( getRegex( inputs.filter('[name=whoFor]').eq(0).attr('data-type') )['error'] + '<br/>')
+            inputs.filter('[name=whoFor]').addClass('errorInput');
+        }
+        else{
+            inputs.filter('[name=whoFor]').removeClass('errorInput');
+        }
+        if( typeof inputs.filter('[name=experience]:checked').val() == 'undefined'){
+            hasError = true;
+            errorBox.append( getRegex( inputs.filter('[name=experience]').eq(0).attr('data-type') )['error'] + '<br/>');
+            inputs.filter('[name=experience]').addClass('errorInput');
+        }
+        else{
+            inputs.filter('[name=experience]').removeClass('errorInput');
+        }
+
+        if( hasError ){
+            errorBox.slideDown('slow');
+        }
+        else{
+            if( typeof inputs.filter('[name=whoFor]:checked').val() == 'undefined'){
+                var whoFor = '';
+            }
+            else{
+                whoFor = inputs.filter('[name=whoFor]:checked').val();
+            }
+            if( typeof inputs.filter('[name=experience]:checked').val() == 'undefined'){
+                var experience = '';
+            }
+            else{
+                experience = inputs.filter('[name=experience]:checked').val();
+            }
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'signUp',
+                    'name' : inputs.filter('[name=name]').val(),
+                    'email' : inputs.filter('[name=email]').val(),
+                    'phone' : inputs.filter('[name=phone]').val(),
+                    'extension' : inputs.filter('[name=extension]').val(),
+                    'age' : inputs.filter('[name=age]').val(),
+                    'whoFor' : whoFor,
+                    'experience' : experience,
+                    'comments' : inputs.filter('[name=comments]').val()
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    var e = false;
+                    for(var x in data){
+                        if(data[x] == false ){
+                            console.log(x);
+                            errorBox.append( x +' ' + getRegex(x)['error'] + '<br/>');
+                            e = true;
+                        }
+                    }
+                    if (e) {
+                        errorBox.slideDown('slow');
+                    }
+                    else{
+                        createSuccessBanner('shit happened successfully');
+                        clearForm(inputs);
+                    }
+                }
+            });
+        }
+    });
+
+});
+/**************************************************************************/
+/*********************************Utilities********************************/
+/**************************************************************************/
+
+$(document).ready(function(){
+    if ( $('.countDown').length > 0 ) {
+        var counter = $('.countDown');
+        var count = parseInt( counter.html() );
+
+        setInterval(function(){
+            console.log(count);
+            if ( count > 0 ) {
+                counter.html(--count);
+            }
+            else if( count == 0){
+                goTo( getApp_Dir('templates') );
+            }
+        }, 1000);
+    }
+});
+
