@@ -30,7 +30,23 @@ function createSuccessBanner(str, error, time){
     $('.successBanner').slideDown(550, function(){
         setTimeout("$('.successBanner').slideUp(550, function(){$('.successBanner').remove();})", time);
     });
+}
 
+function fillFormWithHappiness(parent, message){
+    if(message){
+        var message = 'Form Sent Successfully<br/>';
+    }
+    parent.fadeOut('slow', function(){
+        parent.empty();
+        var str =  ''+
+            '<div id="actionFinished" class="aligncenter">'+
+            '<img class="width25" src="' + getApp_Dir('assets/img/green.png') +'" />'+
+            '<br/>'+
+            message
+        '</div>';
+        parent.append(str);
+        parent.fadeIn('slow');
+    });
 }
 
 function checkRegex(str, type, formClass, pattern) {

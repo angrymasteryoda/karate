@@ -779,8 +779,9 @@ $(document).ready(function(){
                         errorBox.slideDown('slow');
                     }
                     else{
-                        createSuccessBanner('shit happened successfully');
+                        createSuccessBanner('Signed Up Successfully');
                         clearForm(inputs);
+                        fillFormWithHappiness(parent, 'Signed Up Successfully<br/>We will confirm this will shortly')
                     }
                 }
             });
