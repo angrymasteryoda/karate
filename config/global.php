@@ -26,7 +26,7 @@ else if(SERVER == 'live'){
     Define('DB_PASSWORD', '47924cis12');
     Define('DB_HOST', 'localhost');
 }
-//test
+
 
 function loadDB($databaseName = null){
     $DATABASE_LOADED = true;
