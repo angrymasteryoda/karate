@@ -42,13 +42,26 @@ include_once '../config/global.php';
                     <input name="age" type="text" placeholder="Age" data-type="numbers"/>
                 </label>
                 <label>Who are the lessons for<br/>
-                    Child: <input name="whoFor" type="radio" value="Child" />
-                    Self:<input name="whoFor" type="radio" value="Self" /><br/>
+                    Child: <input name="whoFor" type="radio" value="Child" data-type="whoFor" data-pass="true" />
+                    Self:<input name="whoFor" type="radio" value="Self" data-type="whoFor" data-pass="false" /><br/>
                 </label>
+                <div class="none whoFor margin10_top">
+                    <label>Parent Name
+                        <input type="text" placeholder="Parent Name" name="pName" data-type="pName" data-parent="whoFor"/>
+                    </label>
+                    <label>Parent Cell Phone
+                        <input type="text" placeholder="Parent Cell Phone" name="pCell" data-type="pCell" data-parent="whoFor"/>
+                    </label>
+                </div>
                 <label>Past Experience<br/>
-                    Yes: <input name="experience" type="radio" value="Yes" />
-                    No:<input name="experience" type="radio" value="No" /><br/>
+                    Yes: <input name="experience" type="radio" value="Yes" data-type="experience" data-pass="true" />
+                    No:<input name="experience" type="radio" value="No" data-type="experience" data-pass="false" /><br/>
                 </label>
+                <div class="none experience margin10_top">
+                    <label>Current Belt
+                        <input type="text" placeholder="Current Belt" name="belt" data-type="belt" data-parent="experience"/>
+                    </label>
+                </div>
                 <label>Other Comments:
                     <textarea placeholder="Comments" name="comments" ></textarea>
                 </label>

@@ -84,9 +84,20 @@ class Validation {
             'name' => array(
                 'regex' => '/^[A-Za-z ]{2,50}$/',
                 'error' => 'has to be 2-50 letters long'
+            ),
+            'pName' => array(
+                'regex' => '/^[A-Za-z ]{2,50}$/',
+                'error' => 'has to be 2-50 letters long'
+            ),
+            'pCell' => array(
+                'regex' => '/(\+?(\d?)[-\s.]?\(?(\d{3})\)?[-\s.]?(\d{3})[-\s.]?(\d{4})){1}/',
+                'error' => 'has to be a valid North American phone number'
+            ),
+            'belt' => array(
+                'regex' => '/^[a-zA-Z]{2,15}$/',
+                'error' => 'has to be 2-15 letters only'
             )
         );
-
         if($type == null){
             return $regex;
         }

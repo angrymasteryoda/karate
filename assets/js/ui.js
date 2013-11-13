@@ -7,7 +7,7 @@
 var APP_URL = '';
 $(document).ready(function(){
     APP_URL = $('meta[name="url"]').attr('content');
-})
+});
 
 /**************************************************************************/
 /**********************************delete terms****************************/
@@ -679,8 +679,30 @@ $(document).ready(function(){
         }
     });
 
+    //experience
+    $('[name=experience]', parent).click(function(){
+        if( $('[name=experience]:checked', parent).val() == 'Yes' ){
+            $('.experience').slideDown('slow');
+        }
+        else if( $('[name=experience]:checked', parent).val() == 'No' ){
+            $('.experience').slideUp('slow');
+        }
+
+    });
+
+    //Who for
+    $('[name=whoFor]', parent).click(function(){
+        if( $('[name=whoFor]:checked', parent).val() == 'Child' ){
+            $('.whoFor').slideDown('slow');
+        }
+        else if( $('[name=whoFor]:checked', parent).val() == 'Self' ){
+            $('.whoFor').slideUp('slow');
+        }
+
+    });
+
     //phone field formatter
-    $('[name=phone]', parent).blur(function() {
+    $('[name=phone], [name=pCell]', parent).blur(function() {
         var returned = checkRegex( $(this).val(), $(this).attr('data-type') );
         if( returned ){
             clog( returned );
@@ -698,26 +720,29 @@ $(document).ready(function(){
 
         for(var i = 0; i < inputs.length; i++){
             var input = inputs.eq(i);
-            if( checkRegex( input.val(), input.attr('data-type'), $('.addEventForm') ) ){
-                clog(input.val());
-                if( input.hasClass('errorInput') ){
-                    input.removeClass('errorInput');
-                }
-            }
-            else{
-                hasError = true;
-                input.addClass('errorInput');
-                if( input.attr('data-type').match(/conf/) ){
-                    errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+            if ( input.attr('type') != 'radio' && input.attr('type') != 'checkbox') {
+                if( checkRegex( input.val(), input.attr('data-type'), $('.addEventForm') ) ){
+                    clog(input.val());
+                    if( input.hasClass('errorInput') ){
+                        input.removeClass('errorInput');
+                    }
                 }
                 else{
-                    errorBox.append( input.attr('placeholder') +' '+  getRegex( input.attr('data-type') )['error'] + '<br/>')
+                    if ( checkParentRadio(input, parent) ) {
+                        hasError = true;
+                        input.addClass('errorInput');
+                        if( input.attr('data-type').match(/conf/) ){
+                            errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                        }
+                        else{
+                            errorBox.append( input.attr('placeholder') +' '+  getRegex( input.attr('data-type') )['error'] + '<br/>')
+                        }
+                    }
                 }
             }
         }
 
         //check radio is selected
-
         if( typeof inputs.filter('[name=whoFor]:checked').val() == 'undefined'){
             hasError = true;
             errorBox.append( getRegex( inputs.filter('[name=whoFor]').eq(0).attr('data-type') )['error'] + '<br/>')
@@ -739,17 +764,21 @@ $(document).ready(function(){
             errorBox.slideDown('slow');
         }
         else{
-            if( typeof inputs.filter('[name=whoFor]:checked').val() == 'undefined'){
-                var whoFor = '';
-            }
-            else{
+            var whoFor = '';
+            var experience = '';
+            var pName = '';
+            var pCell = '';
+            var belt = '';
+
+            if( typeof inputs.filter('[name=whoFor]:checked').val() != 'undefined'){
                 whoFor = inputs.filter('[name=whoFor]:checked').val();
+                pName = inputs.filter('[name=pName]').val();
+                pCell = inputs.filter('[name=pCell]').val();
             }
-            if( typeof inputs.filter('[name=experience]:checked').val() == 'undefined'){
-                var experience = '';
-            }
-            else{
+
+            if( typeof inputs.filter('[name=experience]:checked').val() != 'undefined'){
                 experience = inputs.filter('[name=experience]:checked').val();
+                belt = inputs.filter('[name=belt]').val();
             }
             $.ajax({
                 'url' : getApp_Dir('libraries/Actions.php'),
@@ -763,7 +792,10 @@ $(document).ready(function(){
                     'extension' : inputs.filter('[name=extension]').val(),
                     'age' : inputs.filter('[name=age]').val(),
                     'whoFor' : whoFor,
+                    'pName' : pName,
+                    'pCell' : pCell,
                     'experience' : experience,
+                    'belt' : belt,
                     'comments' : inputs.filter('[name=comments]').val()
                 },
                 'success' : function(data, textStatus, jqXHR){
