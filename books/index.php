@@ -47,6 +47,9 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
         <p>
             <a href="./viewContact.php">View Contacts</a>
         </p>
+        <p>
+            <a href="./viewStudents.php">View Students</a>
+        </p>
 <!--        <p>-->
 <!--            <a href="./addBlackBelts.php">Add and edit black belts</a>-->
 <!--        </p>-->

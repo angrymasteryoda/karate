@@ -19,5 +19,4 @@ loadClasses();
 Core::loadCss();
 Core::loadJavascript();
 
-?>
 	

@@ -745,7 +745,7 @@ $(document).ready(function(){
         //check radio is selected
         if( typeof inputs.filter('[name=whoFor]:checked').val() == 'undefined'){
             hasError = true;
-            errorBox.append( getRegex( inputs.filter('[name=whoFor]').eq(0).attr('data-type') )['error'] + '<br/>')
+            errorBox.append( getRegex( inputs.filter('[name=whoFor]').eq(0).attr('data-type') )['error'] + '<br/>');
             inputs.filter('[name=whoFor]').addClass('errorInput');
         }
         else{
@@ -820,6 +820,88 @@ $(document).ready(function(){
         }
     });
 
+});
+
+/**************************************************************************/
+/*****************************view students********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    var parentTable = $('.students');
+    $('.student', parentTable).click(function(){
+        var id = $(this).attr('studentId');
+        parentTable.find('.fullStudent[studentId=' + id + ']').slideToggle();
+    });
+
+    $('.markStudentAs', parentTable).on({
+        'click' : function(){
+            var clicked = $(this);
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'markStudentAs',
+                    'studentId' : $(this).parent().attr('studentId'),
+                    'markAs' : clicked.attr('data-state')
+                },
+                'success' : function(data, x, s){
+                    createSuccessBanner('Marked as '+ ( (clicked.attr('data-state') == 1) ? ('New') : ('Current') ) +' Student');
+                    $('[studentId=' +  clicked.parent().attr('studentId') + ']').filter('tr').removeClass('unread').addClass('read')
+                }
+            });
+        }
+    });
+
+    $('.studentDelete', parentTable).on({
+        'click' : function(){
+            var clicked = $(this);
+            var id = $(this).parent().attr('studentId');
+            var name = parentTable.find('.student[studentId=' + id + '] td').eq(0).html();
+            var proceed = confirm('Are you sure you want to delete "' + name +'" \nyou Can Not undo this they will have to register');
+            if ( proceed ) {
+                $.ajax({
+                    'url' : getApp_Dir('libraries/Actions.php'),
+                    'type' : 'post',
+                    'dataType' : 'json',
+                    'data' : {
+                        'header' : 'deleteStudent',
+                        'studentId' : $(this).parent().attr('studentId')
+                    },
+                    'success' : function(data, x, s){
+                        createSuccessBanner('Student Deleted');
+                        $('[studentId=' +  clicked.parent().attr('studentId') + ']').fadeOut(520, function(){
+                            $(this).remove();
+                        });
+
+                    }
+                });
+            }
+        }
+    });
+
+    $('.studentEdit', parentTable).on({
+        'click' : function(){
+            var clicked = $(this);
+            var student = clicked.parent().attr('studentId');
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'getEditPerm',
+                    'editId' : clicked.attr('data-edit'),
+                    'page' : location.href,
+                    'editingId' : student
+                },
+                'success' : function(data, x, s){
+                    goTo( getApp_Dir( 'books/edit.php?id=' + clicked.attr('data-edit') + '&sid=' + student + '&e=' + data['hash'] ) );
+
+                }
+            });
+        }
+    });
+
+    adminHeartbeat();
 });
 /**************************************************************************/
 /*********************************Utilities********************************/

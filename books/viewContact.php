@@ -1,17 +1,6 @@
 <?php
 include_once '../config/global.php';
-if ($_SESSION['time'] + 10 * 60 < time()) {
-    unset( $_SESSION['time'] );
-    unset( $_SESSION['username'] );
-    header( 'Location: ../books/login.php' ) ;
-} else {
-    if( empty( $_SESSION['username'] )){
-        header( 'Location: ../books/login.php' ) ;
-    }
-    else{
-        $_SESSION['time'] = time();
-    }
-}
+checkLogin();
 ?>
 <!DOCTYPE html>
 <html lang="en">

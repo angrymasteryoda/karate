@@ -1,6 +1,6 @@
 *.iml
 *.ipr
 *.iws
-config/*.php
+config/connect.php
 .idea/
 out/

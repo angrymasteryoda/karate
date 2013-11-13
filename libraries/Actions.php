@@ -103,6 +103,7 @@ switch( Security::sanitize( $_POST['header'] ) ){
                         $r = mysql_query($q);
                         $_SESSION['username'] = $username;
                         $_SESSION['time'] = time();
+                        $_COOKIE['username'] = $username;
                         //header( 'Location: '. APP_URL . 'books/' ) ;
                     }
                 }
@@ -324,11 +325,12 @@ switch( Security::sanitize( $_POST['header'] ) ){
         ));
 
         switch ($whoFor){
-            case 'Self': $errors['whoFor']=true;break;
+            case 'Self': $errors['whoFor']=true;$whoFor = 0;break;
             case 'Child':
                 $errors['whoFor']=true;
                 $errors['pName']= Validation::validate('pName', $pName);
                 $errors['pCell']= Validation::validate('pCell', $pCell);
+                $whoFor = 1;
                 break;
             default:$errors['whoFor']=false;break;
         }
@@ -336,8 +338,9 @@ switch( Security::sanitize( $_POST['header'] ) ){
             case 'Yes':
                 $errors['experience']=true;
                 $errors['belt'] = Validation::validate('belt', $belts);
+                $experience = 1;
                 break;
-            case 'No': $errors['experience']=true;break;
+            case 'No': $errors['experience']=true;$experience = 0;break;
             default:$errors['experience']=false;break;
         }
 
@@ -349,8 +352,8 @@ switch( Security::sanitize( $_POST['header'] ) ){
         if ( $canProceed ) {
             $age = intval($age);
 
-            $q = "INSERT INTO `mr2358174_karate_entity_student` (`name`, `age`, `phone`, `email`, `past_experience`, `belts`, `parent_name`, `parent_cell`, `comments`)
-            VALUES ('$name', $age, '$phone', '$email', '$experience', '$belts', '$pName', '$pCell', '$comments')";
+            $q = "INSERT INTO `mr2358174_karate_entity_student` (`name`, `age`, `phone`, `email`, `past_experience`, `belts`, `is_child`, `parent_name`, `parent_cell`, `comments`, `new`)
+            VALUES ('$name', $age, '$phone', '$email', $experience, '$belts', $whoFor, '$pName', '$pCell', '$comments', 1)";
             $r = mysql_query( $q );
             if( !$r ){
                 $errors['mysql'] = false;//mysql_error();
@@ -359,6 +362,85 @@ switch( Security::sanitize( $_POST['header'] ) ){
         closeDB();
         echo json_encode( $errors );
         break;
+
+    case 'markStudentAs' :
+        loadDB(DB_NAME);
+        $canProceed = true;
+        $errors = Validation::validate( array(
+            'numbers' => Security::sanitize( $_POST['studentId'], NO_QUOTES ),
+            'boolean' => Security::sanitize( $_POST['markAs'], NO_QUOTES )
+        ));
+
+        foreach ( $errors as $err ) {
+            if ( !$err ) {
+                $canProceed = false;
+            }
+        }
+
+        if( $canProceed ){
+            $markAs = Security::sanitize( $_POST['markAs'], NO_QUOTES );
+            $q = "UPDATE `mr2358174_karate_entity_student` SET `new`= '$markAs' WHERE `student_id` = '" . Security::sanitize( $_POST['studentId'], NO_QUOTES ) . "';";
+            $r = mysql_query($q);
+        }
+        echo json_encode($errors);
+        closeDB();
+        break;
+
+    case 'deleteStudent' :
+        loadDB(DB_NAME);
+        $id = Security::sanitize( $_POST['studentId'], NO_QUOTES );
+        $q = 'DELETE FROM `mr2358174_karate_entity_student` WHERE `student_id`='. $id .';';
+        $r = mysql_query( $q );
+        if( !$r ){
+            $return = array( 'info' => mysql_error(), 'errors' => true );
+        }
+        else{
+            $return = array( 'errors' => false );
+        }
+        echo json_encode($return);
+        closeDB();
+        break;
+
+    case 'getEditPerm' :
+        loadDB(DB_NAME);
+        $pageFrom = $_POST['page'];
+        $editId = Security::sanitize( $_POST['editId'], NO_QUOTES );
+
+        $canProceed = true;
+        $errors = Validation::validate( array(
+            'numbers' => $editId
+        ));
+
+
+        foreach ( $errors as $err ) {
+            if ( !$err ) {
+                $canProceed = false;
+            }
+        }
+
+        if( $canProceed && isset($_SESSION['username'])){
+            $q = "SELECT `title`, `allowed_parents` FROM `mr2358174_karate_entity_edit` WHERE `edit_id` = '$editId'";
+            $r = mysql_query($q);
+            $edits = array();
+            $i = 0;
+            while( ($row = mysql_fetch_assoc( $r ) ) ){
+                $edits[$i++] = $row;
+            }
+            mysql_free_result($r);
+            $pageFrom = explode('/books/', $pageFrom);
+            if ( $edits[0]['allowed_parents'] ==  $pageFrom[1]) {
+                //echo md5( rand() );
+                $errors['user'] = md5( $_SESSION['username'] );
+                $errors['hash'] = md5( rand() );
+                $_SESSION['editingId'] = md5( Security::sanitize( $_POST['editingId'] ) );
+                $_SESSION['editConfirm'] = $errors['hash'];
+                $_SESSION['editId'] = md5( $editId );
+            }
+        }
+        echo json_encode($errors);
+        closeDB();
+        break;
+
     default:
         echo 'I derped sorry or i forgot to take a break first';
 }

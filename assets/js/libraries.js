@@ -22,7 +22,7 @@ function createSuccessBanner(str, error, time){
     console.log(typeof error);
     if(typeof error != 'undefined'){
         className = 'redHat';
-        addTo = '<br>Debug Info:  ' + error
+        addTo = '<br>Debug Info:  ' + error;
         time = 10000;
     }
 
@@ -33,7 +33,7 @@ function createSuccessBanner(str, error, time){
 }
 
 function fillFormWithHappiness(parent, message){
-    if(message){
+    if(!message){
         var message = 'Form Sent Successfully<br/>';
     }
     parent.fadeOut('slow', function(){
@@ -42,7 +42,7 @@ function fillFormWithHappiness(parent, message){
             '<div id="actionFinished" class="aligncenter">'+
             '<img class="width25" src="' + getApp_Dir('assets/img/green.png') +'" />'+
             '<br/>'+
-            message
+            message +
         '</div>';
         parent.append(str);
         parent.fadeIn('slow');
@@ -114,6 +114,15 @@ function checkParentRadio(input, parent){
     return !parentInput.eq(passIndex).prop('checked');
 }
 
+function adminHeartbeat(){
+    setInterval(function(){
+        $.ajax({
+            'url' : getApp_Dir('books/'),
+            'type' : 'get'
+        });
+    }, 1000 * (8*60))
+}
+
 function getRegex(type){
     if ( type.match(/length-/) ) {
         var len = type.split( '-' )[1];
@@ -134,7 +143,7 @@ var regex = {
         'error' : 'has to be 6-50 long alphanumerical'
     },
     'email' : {
-        'regex' : /^[a-zA-Z0-9-]{1,}@([a-zA-Z\.])?[a-zA-Z]{1,}\.[a-zA-Z]{1,4}$/gi,
+        'regex' : /^[a-zA-Z0-9-\.]{1,}@([a-zA-Z\.])?[a-zA-Z]{1,}\.[a-zA-Z]{1,4}$/gi,
         'error' : 'has to be valid email'
     },
     'complex-password' : {

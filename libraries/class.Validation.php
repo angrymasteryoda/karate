@@ -49,7 +49,7 @@ class Validation {
                 'error' => 'has to be 6-50 long alphanumerical'
             ),
             'email' => array(
-                'regex' => '/[a-zA-Z0-9-]{1,}@([a-zA-Z\.])?[a-zA-Z]{1,}\.[a-zA-Z]{1,4}/i',
+                'regex' => '/[a-zA-Z0-9-\.]{1,}@([a-zA-Z\.])?[a-zA-Z]{1,}\.[a-zA-Z]{1,4}/i',
                 'error' => 'has to be valid email'
             ),
             'complex-password' => array(
@@ -96,6 +96,10 @@ class Validation {
             'belt' => array(
                 'regex' => '/^[a-zA-Z]{2,15}$/',
                 'error' => 'has to be 2-15 letters only'
+            ),
+            'boolean' => array(
+                'regex' => '/^[01]$/',
+                'error' => 'has to be a 0 or 1'
             )
         );
         if($type == null){
