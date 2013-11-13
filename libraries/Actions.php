@@ -309,7 +309,10 @@ switch( Security::sanitize( $_POST['header'] ) ){
         $extension = Security::sanitize( $_POST['extension'], NO_QUOTES );
         $age = Security::sanitize( $_POST['age'], NO_QUOTES );
         $whoFor = Security::sanitize( $_POST['whoFor'], NO_QUOTES );
+        $pName = Security::sanitize( $_POST['pName'], NO_QUOTES);
+        $pCell = Security::sanitize( $_POST['pCell'], NO_QUOTES);
         $experience = Security::sanitize( $_POST['experience'], NO_QUOTES );
+        $belts = Security::sanitize( $_POST['belt'], NO_QUOTES );
         $comments = Security::sanitize( $_POST['comments'], NO_QUOTES );
         
         
@@ -322,11 +325,18 @@ switch( Security::sanitize( $_POST['header'] ) ){
 
         switch ($whoFor){
             case 'Self': $errors['whoFor']=true;break;
-            case 'Child': $errors['whoFor']=true;break;
+            case 'Child':
+                $errors['whoFor']=true;
+                $errors['pName']= Validation::validate('pName', $pName);
+                $errors['pCell']= Validation::validate('pCell', $pCell);
+                break;
             default:$errors['whoFor']=false;break;
         }
         switch ($experience){
-            case 'Yes': $errors['experience']=true;break;
+            case 'Yes':
+                $errors['experience']=true;
+                $errors['belt'] = Validation::validate('belt', $belts);
+                break;
             case 'No': $errors['experience']=true;break;
             default:$errors['experience']=false;break;
         }
@@ -339,8 +349,8 @@ switch( Security::sanitize( $_POST['header'] ) ){
         if ( $canProceed ) {
             $age = intval($age);
 
-            $q = "INSERT INTO `mr2358174_karate_entity_student` (`name`, `age`, `phone`, `email`, `past_experience`, `comments`)
-            VALUES ('$name', $age, '$phone', '$email', '$experience', '$comments')";
+            $q = "INSERT INTO `mr2358174_karate_entity_student` (`name`, `age`, `phone`, `email`, `past_experience`, `belts`, `parent_name`, `parent_cell`, `comments`)
+            VALUES ('$name', $age, '$phone', '$email', '$experience', '$belts', '$pName', '$pCell', '$comments')";
             $r = mysql_query( $q );
             if( !$r ){
                 $errors['mysql'] = false;//mysql_error();
