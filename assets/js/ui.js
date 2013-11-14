@@ -12,6 +12,7 @@ $(document).ready(function(){
 /**************************************************************************/
 /**********************************delete terms****************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.termDelete').submit(function(event){
         event.preventDefault();
@@ -42,9 +43,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /************************************add terms*****************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.addTermForm').submit(function(event){
         event.preventDefault();
@@ -103,9 +106,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /*********************************Calendar*********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.day').on('mouseenter', function(){
         if ( $(this).hasClass('event') ) {
@@ -160,9 +165,11 @@ $(document).ready(function(){
         }
     })
 });
+//</editor-fold>
 /**************************************************************************/
 /********************************Login Form********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.loginForm input').on({
         'keyup' : function(){
@@ -245,9 +252,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /******************************Contact Form********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('input, textarea', '.contactForm').on({
         'keyup' : function(){
@@ -334,9 +343,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /***************************Add admin users********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.addUserForm input').on({
         'keyup' : function(){
@@ -434,9 +445,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /**********************************delete users****************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.userDelete').on({
         'click' : function(){
@@ -468,14 +481,17 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /******************************Add Events**********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
-    $('input, textarea', '.addEventForm').on({
+    var parent = $('.addEventForm');
+    $('input, textarea', parent).on({
         'keyup' : function(){
             var regexType = $(this).attr('data-type');
-            if( checkRegex( $(this).val(), regexType, $('.addEventForm') ) ){
+            if( checkRegex( $(this).val(), regexType, parent ) ){
                 if( $(this).hasClass('errorInput') ){
                     $(this).removeClass('errorInput');
                 }
@@ -486,16 +502,16 @@ $(document).ready(function(){
         }
     });
 
-    $('.addEventForm').submit(function(event){
+    parent.submit(function(event){
     event.preventDefault();
-        var inputs = $('[type=text], [type=password], [type=date], [type=time], textarea', '.addEventForm');
+        var inputs = $('[type=text], [type=password], [type=date], [type=time], textarea', parent);
         var hasError = false;
         var errorBox = $('.addEventForm #errors');
         errorBox.html('');
 
         for(var i = 0; i < inputs.length; i++){
             var input = inputs.eq(i);
-            if( checkRegex( input.val(), input.attr('data-type'), $('.addEventForm') ) ){
+            if( checkRegex( input.val(), input.attr('data-type'), parent ) ){
                 clog(input.val());
                 if( input.hasClass('errorInput') ){
                     input.removeClass('errorInput');
@@ -550,15 +566,15 @@ $(document).ready(function(){
                         errorBox.slideDown('slow');
                     }
                     else{
-                        $('.events').append('<div class="event">'+
-                            '<div class="floatleft width20" >' +  inputs.filter('[name=name]').val() + '</div>'+
-                            '<div class="floatleft width25" >' +  inputs.filter('[name=description]').val() + '</div>'+
-                            '<div class="floatleft width10" >' +  inputs.filter('[name=date]').val() + '</div>'+
-                            '<div class="floatleft width15" >' +  inputs.filter('[name=startTime]').val() + '</div>'+
-                            '<div class="floatleft width15" >' +  inputs.filter('[name=endTime]').val() + '</div>'+
-                            '<div class="floatleft width5" ></div>'+
-                            '<div class="clear"></div>'+
-                            '</div>');
+                        $('.events').prepend('<tr class="data">' +
+                            '<td>' + inputs.filter('[name=name]').val() + '</td>' +
+                            '<td>' +  inputs.filter('[name=description]').val() + '</td>'+
+                            '<td>' +  inputs.filter('[name=date]').val() + '</td>'+
+                            '<td>' +  inputs.filter('[name=startTime]').val() + '</td>'+
+                            '<td>' +  inputs.filter('[name=endTime]').val() + '</td>'+
+                            '<td></td>'+
+                            '</tr>'
+                        );
                         createSuccessBanner('Event added successfully');
                         for(var i = 0; i < inputs.length; i++){
                             inputs.eq(i).val('');
@@ -570,9 +586,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /*********************************delete events****************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     $('.eventDelete').on({
         'click' : function(){
@@ -591,7 +609,7 @@ $(document).ready(function(){
                     'success' : function(data, x, s){
                         if( !data['errors'] ){
                             createSuccessBanner('Event has been deleted successfully!');
-                            clicked.parent('.event').slideUp(550, function(){
+                            clicked.parent().fadeOut(550, function(){
                                 $(this).remove();
                             });
                         }
@@ -604,9 +622,11 @@ $(document).ready(function(){
         }
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /******************************view messages*******************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     var parentTable = $('.messages');
     $('.message', parentTable).click(function(){
@@ -659,10 +679,11 @@ $(document).ready(function(){
         }
     });
 });
-
+//</editor-fold>
 /**************************************************************************/
 /******************************add student ********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     var parent = $('.signUpForm');
     $('input, textarea', parent).on({
@@ -821,10 +842,11 @@ $(document).ready(function(){
     });
 
 });
-
+//</editor-fold>
 /**************************************************************************/
 /*****************************view students********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     var parentTable = $('.students');
     $('.student', parentTable).click(function(){
@@ -901,10 +923,11 @@ $(document).ready(function(){
         }
     });
 });
-
+//</editor-fold>
 /**************************************************************************/
 /*****************************edit students********************************/
 /**************************************************************************/
+//<editor-fold defaultstate="collapsed">
 $(document).ready(function(){
     var parent = $('.editStudentForm');
     $('input, textarea', parent).on({
@@ -1067,6 +1090,7 @@ $(document).ready(function(){
         window.history.back()
     });
 });
+//</editor-fold>
 /**************************************************************************/
 /*********************************Utilities********************************/
 /**************************************************************************/

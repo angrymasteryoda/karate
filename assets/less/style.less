@@ -144,8 +144,14 @@ a:hover{
     width: 341px;
   }
 
-  .messages, .students{
+  .messages, .students, .events{
     width: 1080px;
+
+    tr:nth-child(1){
+      background: url(../img/back_table.gif) repeat-x;
+      height: 27px;
+      border: 1px solid #323232;
+    }
 
     td{
       vertical-align: middle;
@@ -154,13 +160,17 @@ a:hover{
     .unread{
       .bold;
     }
-    .unread, .read{
+    .unread, .read, .data{
       height: 30px;
       background-color: rgb(37,37,37);
       border-bottom: 1px solid black;
+
+      td:nth-child(1){
+        padding-left: 2px;
+      }
     }
 
-    .unread:hover, .read:hover{
+    .unread:hover, .read:hover, .data:hover{
       background-color: rgb(70, 70, 70);
     }
   }
@@ -219,7 +229,7 @@ a:hover{
   }
 }
 
-.termDelete, .userDelete, .eventDelete{color: rgb(170, 27, 27);text-decoration: underline;cursor: pointer;}
+.termDelete, .userDelete, .eventDelete{color: rgb(170, 27, 27);cursor: pointer;}
 
 .redHeader{
   color: rgb(170, 27, 27);

@@ -22,8 +22,27 @@ checkLogin();
         <div>
             <?php
             loadDB(DB_NAME);
+            $sort ='';
+            $sortBy = ( (( (empty($_GET['ob'])) ? ('0') : ($_GET['ob']) ) == '1') ? ( 'DESC' ) : ( 'ASC' ) );
+            switch(  ( (empty($_GET['o'])) ? ('') : ($_GET['o']) ) ){
+                case 1:
+                    $sort = '`name`';
+                    break;
+                case 2:
+                    $sort = '`email`';
+                    break;
+                case 3:
+                    $sort = '`phone`';
+                    break;
+                case 4:
+                    $sort = '`date`';
+                    break;
+                default:
+                    $sort = '`date`';
+            }
+
             $q = "SELECT `contact_id`, `name`, `email`, `phone`, `message`, UNIX_TIMESTAMP(`date`) as `date`, `read` FROM `mr2358174_karate_entity_contact` AS `mr2358174_karate_entity_contact`
-                ORDER BY `read` ASC, `date` DESC;";
+                ORDER BY `read` ASC, $sort $sortBy;";
             $r = mysql_query($q);
             $contacts = array();
             $i = 0;
@@ -36,10 +55,10 @@ checkLogin();
             <table class="margin10 messages">
                 <tbody>
                     <tr>
-                        <td>Name</td>
-                        <td>Email</td>
-                        <td>Phone</td>
-                        <td>Date</td>
+                        <td>Name'. Core::sortIcons(1) .'</td>
+                        <td>Email'. Core::sortIcons(2) .'</td>
+                        <td>Phone'. Core::sortIcons(3) .'</td>
+                        <td>Date'. Core::sortIcons(4) .'</td>
                     </tr>
                     <tr class="redHeader"><td>Unread Messages</td></tr>
             ';

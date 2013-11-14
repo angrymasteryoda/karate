@@ -297,7 +297,7 @@ class Core {
 
     static function sortIcons($order){
         return '
-        <div class="floatright clearfix margin10_right">
+        <div class="floatright clearfix margin15_right">
             <a class="sortable" href="?o='. $order. '&ob=0"><img class="block" src="' .APP_URL . 'assets/img/icon_up_carrot_red.png" /></a>
             <a class="sortable" href="?o='. $order. '&ob=1"><img class="block margin5_top" src="' .APP_URL . 'assets/img/icon_down_carrot_red.png" /></a>
         </div>
