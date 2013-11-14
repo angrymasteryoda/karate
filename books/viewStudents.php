@@ -22,8 +22,30 @@ checkLogin();
         <div>
             <?php
             loadDB(DB_NAME);
+            $sort ='';
+            $sortBy = ( (( (empty($_GET['ob'])) ? ('0') : ($_GET['ob']) ) == '1') ? ( 'DESC' ) : ( 'ASC' ) );
+            switch(  ( (empty($_GET['o'])) ? ('') : ($_GET['o']) ) ){
+                case 1:
+                    $sort = '`name`';
+                    break;
+                case 2:
+                    $sort = '`age`';
+                    break;
+                case 3:
+                    $sort = '`phone`';
+                    break;
+                case 4:
+                    $sort = '`email`';
+                    break;
+                case 5:
+                    $sort = '`date`';
+                    break;
+                default:
+                    $sort = '`date`';
+            }
+
             $q = "SELECT `student_id`, `name`, `age`, `phone`, `email`, `past_experience`, `belts`, `is_child`, `parent_name`, `parent_cell`, `comments`, `current_belt`, `new`, UNIX_TIMESTAMP(`date`) as `date` FROM `mr2358174_karate_entity_student`
-                ORDER BY `new` DESC;";
+                ORDER BY `new` DESC, $sort $sortBy;";
             $r = mysql_query($q);
             $students = array();
             $i = 0;
@@ -36,11 +58,11 @@ checkLogin();
             <table class="margin10 students">
                 <tbody>
                     <tr>
-                        <td>Student Name</td>
-                        <td>Age</td>
-                        <td>Phone</td>
-                        <td>Email</td>
-                        <td>Date Registered</td>
+                        <td>Student Name'. Core::sortIcons(1) .'</td>
+                        <td>Age'. Core::sortIcons(2) .'</td>
+                        <td>Phone'. Core::sortIcons(3) .'</td>
+                        <td>Email'. Core::sortIcons(4) .'</td>
+                        <td>Date Registered'. Core::sortIcons(5) .'</td>
                     </tr>
                     <tr class="redHeader"><td>New Students</td></tr>
             ';

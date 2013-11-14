@@ -900,13 +900,177 @@ $(document).ready(function(){
             });
         }
     });
+});
 
-    adminHeartbeat();
+/**************************************************************************/
+/*****************************edit students********************************/
+/**************************************************************************/
+$(document).ready(function(){
+    var parent = $('.editStudentForm');
+    $('input, textarea', parent).on({
+        'keyup' : function(){
+            var regexType = $(this).attr('data-type');
+            if( checkRegex( $(this).val(), regexType, parent ) ){
+                if( $(this).hasClass('errorInput') ){
+                    $(this).removeClass('errorInput');
+                }
+            }
+            else{
+                $(this).addClass('errorInput');
+            }
+        }
+    });
+
+    //experience
+    $('[name=experience]', parent).click(function(){
+        if( $('[name=experience]:checked', parent).val() == 'Yes' ){
+            $('.experience').slideDown('slow');
+        }
+        else if( $('[name=experience]:checked', parent).val() == 'No' ){
+            $('.experience').slideUp('slow');
+        }
+
+    });
+
+    //Who for
+    $('[name=whoFor]', parent).click(function(){
+        if( $('[name=whoFor]:checked', parent).val() == 'Child' ){
+            $('.whoFor').slideDown('slow');
+        }
+        else if( $('[name=whoFor]:checked', parent).val() == 'Self' ){
+            $('.whoFor').slideUp('slow');
+        }
+
+    });
+
+    //phone field formatter
+    $('[name=phone], [name=pCell]', parent).blur(function() {
+        var returned = checkRegex( $(this).val(), $(this).attr('data-type') );
+        if( returned ){
+            clog( returned );
+            var str = ( (returned[2]=='') ? ('1') : (returned[2]) ) + ' (' + returned[3] + ') ' + returned[4] + '-' + returned[5];
+            $(this).val(str);
+        }
+    });
+
+    parent.submit(function(event){
+        event.preventDefault();
+        var inputs = $('input, textarea', parent);
+        var hasError = false;
+        var errorBox = $('#errors', parent);
+        errorBox.html('');
+
+        for(var i = 0; i < inputs.length; i++){
+            var input = inputs.eq(i);
+            if ( input.attr('type') != 'radio' && input.attr('type') != 'checkbox') {
+                if( checkRegex( input.val(), input.attr('data-type'), $('.addEventForm') ) ){
+                    clog(input.val());
+                    if( input.hasClass('errorInput') ){
+                        input.removeClass('errorInput');
+                    }
+                }
+                else{
+                    if ( checkParentRadio(input, parent) ) {
+                        hasError = true;
+                        input.addClass('errorInput');
+                        if( input.attr('data-type').match(/conf/) ){
+                            errorBox.append( input.attr('placeholder') +' '+ 'has to match ' + input.attr('data-type').split( 'conf' )[1].toLowerCase() + '<br/>');
+                        }
+                        else{
+                            errorBox.append( input.attr('placeholder') +' '+  getRegex( input.attr('data-type') )['error'] + '<br/>')
+                        }
+                    }
+                }
+            }
+        }
+
+        //check radio is selected
+        if( typeof inputs.filter('[name=whoFor]:checked').val() == 'undefined'){
+            hasError = true;
+            errorBox.append( getRegex( inputs.filter('[name=whoFor]').eq(0).attr('data-type') )['error'] + '<br/>');
+            inputs.filter('[name=whoFor]').addClass('errorInput');
+        }
+        else{
+            inputs.filter('[name=whoFor]').removeClass('errorInput');
+        }
+        if( typeof inputs.filter('[name=experience]:checked').val() == 'undefined'){
+            hasError = true;
+            errorBox.append( getRegex( inputs.filter('[name=experience]').eq(0).attr('data-type') )['error'] + '<br/>');
+            inputs.filter('[name=experience]').addClass('errorInput');
+        }
+        else{
+            inputs.filter('[name=experience]').removeClass('errorInput');
+        }
+
+        if( hasError ){
+            errorBox.slideDown('slow');
+        }
+        else{
+            var whoFor = '';
+            var experience = '';
+            var pName = '';
+            var pCell = '';
+            var belt = '';
+
+            if( typeof inputs.filter('[name=whoFor]:checked').val() != 'undefined'){
+                whoFor = inputs.filter('[name=whoFor]:checked').val();
+                pName = inputs.filter('[name=pName]').val();
+                pCell = inputs.filter('[name=pCell]').val();
+            }
+
+            if( typeof inputs.filter('[name=experience]:checked').val() != 'undefined'){
+                experience = inputs.filter('[name=experience]:checked').val();
+                belt = inputs.filter('[name=belt]').val();
+            }
+            $.ajax({
+                'url' : getApp_Dir('libraries/Actions.php'),
+                'type' : 'post',
+                'dataType' : 'json',
+                'data' : {
+                    'header' : 'editStudent',
+                    'id' : $_GET(location.href)['sid'],
+                    'name' : inputs.filter('[name=name]').val(),
+                    'email' : inputs.filter('[name=email]').val(),
+                    'phone' : inputs.filter('[name=phone]').val(),
+                    'extension' : inputs.filter('[name=extension]').val(),
+                    'age' : inputs.filter('[name=age]').val(),
+                    'whoFor' : whoFor,
+                    'pName' : pName,
+                    'pCell' : pCell,
+                    'experience' : experience,
+                    'belt' : belt,
+                    'comments' : inputs.filter('[name=comments]').val()
+                },
+                'success' : function(data, textStatus, jqXHR){
+                    var e = false;
+                    for(var x in data){
+                        if(data[x] == false ){
+                            console.log(x);
+                            errorBox.append( x +' ' + getRegex(x)['error'] + '<br/>');
+                            e = true;
+                        }
+                    }
+                    if (e) {
+                        errorBox.slideDown('slow');
+                    }
+                    else{
+                        createSuccessBanner('Student Edited Successfully');
+                        clearForm(inputs);
+                        fillFormWithHappiness(parent, 'Student Edited Successfully<br><a href="'+ getApp_Dir('books/viewStudents.php') + '">Back to Student Page</a>')
+                    }
+                }
+            });
+        }
+    });
+
+    $('.cancel', parent).click(function(){
+        window.history.back()
+    });
 });
 /**************************************************************************/
 /*********************************Utilities********************************/
 /**************************************************************************/
-
+adminHeartbeat();
 $(document).ready(function(){
     if ( $('.countDown').length > 0 ) {
         var counter = $('.countDown');

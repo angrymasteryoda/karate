@@ -65,7 +65,7 @@ include_once '../config/global.php';
                 <label>Other Comments:
                     <textarea placeholder="Comments" name="comments" ></textarea>
                 </label>
-                <input class="submit" type="submit" value="Send" />
+                <input class="submit" type="submit" value="Sign Up" />
             </form>
         </div>
     </div>

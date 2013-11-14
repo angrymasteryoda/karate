@@ -123,6 +123,21 @@ function adminHeartbeat(){
     }, 1000 * (8*60))
 }
 
+function $_GET(url) {
+    var info = url.split("?");
+    var nameValuePair = info[1].split("&");
+
+    var $_GET = new Object();
+    for (var i = 0; i < nameValuePair.length; i++) {
+        var map = nameValuePair[i].split("=");
+        var name = map[0];
+        var value = map[1];
+
+        $_GET[name] = value;
+    }
+    return $_GET;
+}
+
 function getRegex(type){
     if ( type.match(/length-/) ) {
         var len = type.split( '-' )[1];

@@ -325,7 +325,12 @@ switch( Security::sanitize( $_POST['header'] ) ){
         ));
 
         switch ($whoFor){
-            case 'Self': $errors['whoFor']=true;$whoFor = 0;break;
+            case 'Self':
+                $errors['whoFor']=true;
+                $whoFor = 0;
+                $pName = '';
+                $pCell = '';
+                break;
             case 'Child':
                 $errors['whoFor']=true;
                 $errors['pName']= Validation::validate('pName', $pName);
@@ -340,7 +345,11 @@ switch( Security::sanitize( $_POST['header'] ) ){
                 $errors['belt'] = Validation::validate('belt', $belts);
                 $experience = 1;
                 break;
-            case 'No': $errors['experience']=true;$experience = 0;break;
+            case 'No':
+                $errors['experience']=true;
+                $experience = 0;
+                $belts ='';
+                break;
             default:$errors['experience']=false;break;
         }
 
@@ -439,6 +448,79 @@ switch( Security::sanitize( $_POST['header'] ) ){
         }
         echo json_encode($errors);
         closeDB();
+        break;
+
+    case 'editStudent' :
+        loadDB(DB_NAME);
+        $canProceed = true;
+        $id = Security::sanitize( $_POST['id'] );
+        $name = Security::sanitize( $_POST['name'], NO_QUOTES );
+        $email = Security::sanitize( $_POST['email'], NO_QUOTES );
+        $phone = Security::sanitize( $_POST['phone'], NO_QUOTES );
+        $extension = Security::sanitize( $_POST['extension'], NO_QUOTES );
+        $age = Security::sanitize( $_POST['age'], NO_QUOTES );
+        $whoFor = Security::sanitize( $_POST['whoFor'], NO_QUOTES );
+        $pName = Security::sanitize( $_POST['pName'], NO_QUOTES);
+        $pCell = Security::sanitize( $_POST['pCell'], NO_QUOTES);
+        $experience = Security::sanitize( $_POST['experience'], NO_QUOTES );
+        $belts = Security::sanitize( $_POST['belt'], NO_QUOTES );
+        $comments = Security::sanitize( $_POST['comments'], NO_QUOTES );
+
+
+        $errors = Validation::validate( array(
+            'length-4' => $name,
+            'email' => $email,
+            'usphone' => $phone,
+            'extension' => $extension,
+        ));
+
+        switch ($whoFor){
+            case 'Self':
+                $errors['whoFor']=true;
+                $whoFor = 0;
+                $pName = '';
+                $pCell = '';
+                break;
+            case 'Child':
+                $errors['whoFor']=true;
+                $errors['pName']= Validation::validate('pName', $pName);
+                $errors['pCell']= Validation::validate('pCell', $pCell);
+                $whoFor = 1;
+                break;
+            default:$errors['whoFor']=false;break;
+        }
+        switch ($experience){
+            case 'Yes':
+                $errors['experience']=true;
+                $errors['belt'] = Validation::validate('belt', $belts);
+                $experience = 1;
+                break;
+            case 'No':
+                $errors['experience']=true;
+                $experience = 0;
+                $belts ='';
+                break;
+            default:$errors['experience']=false;break;
+        }
+
+        foreach ( $errors as $err ) {
+            if ( !$err ) {
+                $canProceed = false;
+            }
+        }
+        if ( $canProceed ) {
+            $age = intval($age);
+
+            $q = "UPDATE `mr2358174_karate_entity_student` SET `name` = '$name', `age` = $age, `phone` = '$phone', `email` = '$email',
+            `past_experience` = $experience, `belts` = '$belts', `is_child` = $whoFor, `parent_name` = '$pName', `parent_cell` = '$pCell',
+            `comments` = '$comments' WHERE `student_id` = $id";
+            $r = mysql_query( $q );
+            if( !$r ){
+                $errors['mysql'] = false;//mysql_error();
+            }
+        }
+        closeDB();
+        echo json_encode( $errors );
         break;
 
     default:

@@ -276,8 +276,9 @@
   width: 1100px;
 }
 body {
-    background: #000 url('../img/dark_mosaic.png');
-    color: white;
+  background-image: url('../img/dark_mosaic.png');
+  background-color: #000;
+  color: white;
   font-family: 'Raleway', 'Lato', Arial, sans-serif !important;
 }
 a {
@@ -322,13 +323,12 @@ a:hover {
   text-shadow: 0 0 10px #ffffff;
 }
 #content {
-  padding: 0 10px 0 10px;
   width: 1100px;
-  margin: 0 auto 30px;
+  margin: 0px auto 30px;
   border: 1px solid #2C2929;
   border-radius: 5px;
   background-color: #161616;
-  //padding: 5px 0 5px 0;
+  padding: 5px 0 5px 0;
   line-height: 15pt !important;
 }
 #content .pageTitle {
@@ -477,6 +477,9 @@ a:hover {
 .redHeader {
   color: #aa1b1b;
   text-shadow: 2px 2px 1px #212121;
+}
+.sortable {
+  margin: 0;
 }
 .input [type=text],
 .input [type=password] {
