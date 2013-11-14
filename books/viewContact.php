@@ -41,8 +41,11 @@ checkLogin();
                     $sort = '`date`';
             }
 
-            $q = "SELECT `contact_id`, `name`, `email`, `phone`, `message`, UNIX_TIMESTAMP(`date`) as `date`, `read` FROM `mr2358174_karate_entity_contact` AS `mr2358174_karate_entity_contact`
-                ORDER BY `read` ASC, $sort $sortBy;";
+            $pageData = Core::getPageData('mr2358174_karate_entity_contact');
+            $limit = 'LIMIT ' . $pageData['starting'] .',' . $pageData['ipp'];
+
+            $q = "SELECT `contact_id`, `name`, `email`, `phone`, `message`, UNIX_TIMESTAMP(`date`) as `date`, `read` FROM `mr2358174_karate_entity_contact`
+                ORDER BY `read` ASC, $sort $sortBy $limit";
             $r = mysql_query($q);
             $contacts = array();
             $i = 0;
@@ -103,6 +106,8 @@ checkLogin();
             }
             echo'</tbody>
             </table>';
+
+            Core::printPageLinks($pageData);
 //            echo '
 //            <div class="margin20_top margin10_left margin10_right tableView">
 //                    <div class="floatleft width20" >Username</div>

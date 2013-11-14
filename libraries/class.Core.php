@@ -310,4 +310,74 @@ class Core {
         </div>
         ';
     }
+
+    static function getPageData($table = null, $items = 25){
+        if( is_null($table) )return'';
+        if( !mysql_ping() )loadDB(DB_NAME);
+
+        $q = "SELECT COUNT(*) FROM $table;";
+        $r = mysql_query($q);
+        $row = mysql_fetch_array($r, MYSQL_NUM);
+        $totalRecords = $row[0];
+
+        $ipp = ( ( empty($_GET['ipp']) ) ? ( $items ) : ( $_GET['ipp'] ) );//item per page
+        $page = ( ( empty($_GET['p']) ) ? ( 1 ) : ( $_GET['p'] ) );
+        $startingPoint = ( ( empty($_GET['sp']) ) ? ( 0 ) : ( $_GET['sp'] ) );//where we left off
+
+        if ( !is_numeric($ipp) ) {
+            $ipp = $items;
+        }
+
+        if ( !is_numeric($page) ) {
+            $page = 1;
+        }
+
+        if ( !is_numeric($startingPoint) ) {
+            $startingPoint = 0;
+        }
+
+        if ( $totalRecords > $ipp ) {
+            $pages = ceil( $totalRecords / $ipp );
+        }
+        else{
+            $pages = 1;
+        }
+
+        return array(
+            'pages' => $pages,
+            'starting' => $startingPoint,
+            'ipp' => $ipp,
+            'page' => $page
+        );
+    }
+
+    static function printPageLinks($pageData = null, $canEcho = true){
+        if( is_null($pageData) ){return'';}
+
+        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $parsed = parse_url($actual_link);
+        if ( isset($parsed['query']) ) {
+            $isQuery = true;
+        }
+        else $isQuery=false;
+
+        $str ='<div class="pagesLinks">';
+        for ( $i = 0; $i < $pageData['pages']; $i++ ) {
+            if( ($i+1) != $pageData['page']){
+                $str .= '<a href="'.$actual_link . ( ($isQuery) ? ('&') : ('?') ) . 'p='. ($i+1) .'&sp='. ($pageData['ipp'] * $i) .'">' . ($i+1) . '</a>';
+            }
+            else{
+                $str .= '<a class="active">' . ($i+1) . '</a>';
+            }
+        }
+        $str .= '</div>';
+
+        if ( $canEcho ) {
+            echo $str;
+        }
+        else{
+            return $str;
+        }
+
+    }
 }

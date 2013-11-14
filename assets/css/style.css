@@ -460,16 +460,16 @@ a:hover {
 #content .users .data:hover {
   background-color: #464646;
 }
-#content .pages {
+#content .pagesLinks {
   margin: 0 auto 0 !important;
   width: 50% !important;
   text-align: center;
 }
-#content .pages a {
+#content .pagesLinks a {
   margin: 3px;
   font-size: 13pt !important;
 }
-#content .pages .active {
+#content .pagesLinks .active {
   color: white;
 }
 #footer {

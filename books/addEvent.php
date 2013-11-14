@@ -82,24 +82,11 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
             }
 
             loadDB(DB_NAME);
-            //get record count
-            $q = "SELECT COUNT(`event_id`) FROM `mr2358174_karate_entity_events`;";
-            $r = mysql_query($q);
-            $row = mysql_fetch_array($r, MYSQL_NUM);
-            $totalRecords = $row[0];
-
-            $ipp = ( ( empty($_GET['ipp']) ) ? ( 1 ) : ( $_GET['ipp'] ) );//item per page
-            $page = ( ( empty($_GET['p']) ) ? ( 1 ) : ( $_GET['p'] ) );
-            $startingPoint = ( ( empty($_GET['sp']) ) ? ( 0 ) : ( $_GET['sp'] ) );//where we left off
-
-            if ( $totalRecords > $ipp ) {
-                $pages = ceil( $totalRecords / $ipp );
-            }
-            else{
-                $pages = 1;
-            }
-
+            $pageData = Core::getPageData('mr2358174_karate_entity_events');
+            $startingPoint = $pageData['starting'];
+            $ipp = $pageData['ipp'];
             //normal query
+
             $q = "SELECT `event_id`, `name`, `description`, `start_date`, `start_time`, `end_time` FROM `mr2358174_karate_entity_events`
             ORDER BY $sort $sortBy LIMIT $startingPoint, $ipp;";
             $r = mysql_query($q);
@@ -135,20 +122,7 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
             }
             echo '</table>';
 
-            echo '
-            <div class="pages">';
-            
-            for( $i = 0; $i < $pages; $i++ ){
-                if( ($i+1) != $page){
-                    echo '<a href="?p='. ($i+1) .'&sp='. ($ipp * $i) .'">' . ($i+1) . '</a>';
-                }
-                else{
-                    echo '<a class="active">' . ($i+1) . '</a>';
-                }
-            }
-            echo '
-            </div>
-            ';
+            Core::printPageLinks($pageData);
             ?>
         </div>
     </div>

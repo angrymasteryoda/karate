@@ -79,7 +79,13 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
             }
 
             loadDB(DB_NAME);
-            $q = "SELECT `user_id`, `username`, `email`, `last_ip`, `last_browser`, `last_platform`  FROM `47924`.`mr2358174_karate_entity_users` AS `mr2358174_karate_entity_users` ORDER BY $sort $sortBy;";
+
+            $pageData = Core::getPageData('mr2358174_karate_entity_users');
+            $limit = 'LIMIT ' . $pageData['starting'] .',' . $pageData['ipp'];
+
+            $q = "SELECT `user_id`, `username`, `email`, `last_ip`, `last_browser`, `last_platform`
+            FROM `47924`.`mr2358174_karate_entity_users` AS `mr2358174_karate_entity_users`
+            ORDER BY $sort $sortBy $limit;";
             $r = mysql_query($q);
             $users = array();
             $i = 0;
@@ -137,6 +143,8 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
 //                    ';
 //            }
 //            echo '</div>';
+
+            Core::printPageLinks($pageData);
             ?>
         </div>
     </div>

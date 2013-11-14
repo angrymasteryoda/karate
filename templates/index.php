@@ -65,9 +65,9 @@ include_once '../config/global.php';
                 Ask about special family rates<br>
             </p>
         </div>
-        <div class="floatleft map">
-            <p class="redHeader margin20_bottom">Where to find us</p>
-            <iframe width="300" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=68225+Ramon+Road+at+Whispering+Palms++Cathedral+City&amp;hl=en&amp;sll=37.269174,-119.306607&amp;sspn=11.374613,19.753418&amp;hnear=68225+Ramon+Rd,+Cathedral+City,+California+92234&amp;t=m&amp;ie=UTF8&amp;hq=&amp;ll=33.816593,-116.473103&amp;spn=0.014262,0.025663&amp;z=14&amp;iwloc=A&amp;output=embed"></iframe><br />
+        <div class="floatleft map aligncenter">
+            <p class="redHeader margin20_bottom font14pt padding5">Where to find us</p>
+            <iframe style="margin-left: 12px;" width="308" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=68225+Ramon+Road+at+Whispering+Palms++Cathedral+City&amp;hl=en&amp;sll=37.269174,-119.306607&amp;sspn=11.374613,19.753418&amp;hnear=68225+Ramon+Rd,+Cathedral+City,+California+92234&amp;t=m&amp;ie=UTF8&amp;hq=&amp;ll=33.816593,-116.473103&amp;spn=0.014262,0.025663&amp;z=14&amp;iwloc=A&amp;output=embed"></iframe><br />
         </div>
         <div class="clear"></div>
     </div>

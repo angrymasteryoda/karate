@@ -44,8 +44,11 @@ checkLogin();
                     $sort = '`date`';
             }
 
+            $pageData = Core::getPageData('mr2358174_karate_entity_student');
+            $limit = 'LIMIT ' . $pageData['starting'] .',' . $pageData['ipp'];
+
             $q = "SELECT `student_id`, `name`, `age`, `phone`, `email`, `past_experience`, `belts`, `is_child`, `parent_name`, `parent_cell`, `comments`, `current_belt`, `new`, UNIX_TIMESTAMP(`date`) as `date` FROM `mr2358174_karate_entity_student`
-                ORDER BY `new` DESC, $sort $sortBy;";
+                ORDER BY `new` DESC, $sort $sortBy $limit;";
             $r = mysql_query($q);
             $students = array();
             $i = 0;
@@ -123,6 +126,8 @@ checkLogin();
             }
             echo'</tbody>
             </table>';
+
+            Core::printPageLinks($pageData);
             ?>
         </div>
     </div>
