@@ -87,7 +87,6 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
             $r = mysql_query($q);
             $row = mysql_fetch_array($r, MYSQL_NUM);
             $totalRecords = $row[0];
-            echo $totalRecords;
 
             $ipp = ( ( empty($_GET['ipp']) ) ? ( 1 ) : ( $_GET['ipp'] ) );//item per page
             $page = ( ( empty($_GET['p']) ) ? ( 1 ) : ( $_GET['p'] ) );
@@ -134,7 +133,22 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
                     </tr>
                     ';
             }
-            echo '</table>'
+            echo '</table>';
+
+            echo '
+            <div class="pages">';
+            
+            for( $i = 0; $i < $pages; $i++ ){
+                if( ($i+1) != $page){
+                    echo '<a href="?p='. ($i+1) .'&sp='. ($ipp * $i) .'">' . ($i+1) . '</a>';
+                }
+                else{
+                    echo '<a class="active">' . ($i+1) . '</a>';
+                }
+            }
+            echo '
+            </div>
+            ';
             ?>
         </div>
     </div>
