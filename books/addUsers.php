@@ -48,7 +48,7 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
                 <label>Email:
                     <input name="email" type="text" placeholder="Email" data-type="email" value=""/>
                 </label>
-                <input class="submit" type="submit" value="Login In" />
+                <input class="submit" type="submit" value="Create Account" />
             </form>
         </div>
         <div>
@@ -56,8 +56,30 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
                 Delete Users
             </p>
             <?php
+            $sort ='';
+            $sortBy = ( (( (empty($_GET['ob'])) ? ('0') : ($_GET['ob']) ) == '1') ? ( 'DESC' ) : ( 'ASC' ) );
+            switch(  ( (empty($_GET['o'])) ? ('') : ($_GET['o']) ) ){
+                case 1:
+                    $sort = '`username`';
+                    break;
+                case 2:
+                    $sort = '`email`';
+                    break;
+                case 3:
+                    $sort = '`last_browser`';
+                    break;
+                case 4:
+                    $sort = '`last_platform`';
+                    break;
+                case 5:
+                    $sort = '`last_platform`';
+                    break;
+                default:
+                    $sort = '`username`';
+            }
+
             loadDB(DB_NAME);
-            $q = "SELECT `user_id`, `username`, `email`, `last_ip`, `last_browser`, `last_platform`  FROM `47924`.`mr2358174_karate_entity_users` AS `mr2358174_karate_entity_users`;";
+            $q = "SELECT `user_id`, `username`, `email`, `last_ip`, `last_browser`, `last_platform`  FROM `47924`.`mr2358174_karate_entity_users` AS `mr2358174_karate_entity_users` ORDER BY $sort $sortBy;";
             $r = mysql_query($q);
             $users = array();
             $i = 0;
@@ -66,29 +88,55 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
             }
 
             echo '
-            <div class="margin20_top margin10_left margin10_right users">
-                    <div class="floatleft width20" >Username</div>
-                    <div class="floatleft width25" >Email</div>
-                    <div class="floatleft width10" >Last used ip</div>
-                    <div class="floatleft width15" >Last used browser</div>
-                    <div class="floatleft width15" >Last used platform</div>
-                    <div class="floatleft width15" >Delete</div>
-                    <div class="clear"></div>
-                ';
+                <table class="margin10 users">
+                <tbody>
+                    <tr>
+                        <td>Username'. Core::sortIcons(1) .'</td>
+                        <td>Email'. Core::sortIcons(2) .'</td>
+                        <td>Last used ip'. Core::sortIcons(3) .'</td>
+                        <td>Last used browser'. Core::sortIcons(4) .'</td>
+                        <td>Last used platform'. Core::sortIcons(5) .'</td>
+                        <td>Delete</td>
+                    </tr>
+            ';
+
             foreach ( $users as $user ) {
                 echo '
-                <div class="user">
-                    <div class="floatleft width20" >'. $user['username'] .'</div>
-                    <div class="floatleft width25" >'. $user['email'] .'</div>
-                    <div class="floatleft width10" >'. $user['last_ip'] .'</div>
-                    <div class="floatleft width15" >'. $user['last_browser'] .'</div>
-                    <div class="floatleft width15" >'. $user['last_platform'] .'</div>
-                    <div class="floatleft width5 userDelete" userId="'.$user['user_id'].'" data-name="'. $user['username'] .'" >Delete</div>
-                    <div class="clear"></div>
-                </div>
+                <tr class="data user">
+                    <td>'. $user['username'] .'</td>
+                    <td>'. $user['email'] .'</td>
+                    <td>'. $user['last_ip'] .'</td>
+                    <td>'. $user['last_browser'] .'</td>
+                    <td>'. $user['last_platform'] .'</td>
+                    <td class="userDelete" userId="'.$user['user_id'].'" data-name="'. $user['username'] .'" >Delete</td>
+                </tr>
                     ';
             }
-            echo '</div>';
+            echo '</table>';
+//            echo '
+//            <div class="margin20_top margin10_left margin10_right users">
+//                    <div class="floatleft width20" >Username</div>
+//                    <div class="floatleft width25" >Email</div>
+//                    <div class="floatleft width10" >Last used ip</div>
+//                    <div class="floatleft width15" >Last used browser</div>
+//                    <div class="floatleft width15" >Last used platform</div>
+//                    <div class="floatleft width15" >Delete</div>
+//                    <div class="clear"></div>
+//                ';
+//            foreach ( $users as $user ) {
+//                echo '
+//                <div class="user">
+//                    <div class="floatleft width20" >'. $user['username'] .'</div>
+//                    <div class="floatleft width25" >'. $user['email'] .'</div>
+//                    <div class="floatleft width10" >'. $user['last_ip'] .'</div>
+//                    <div class="floatleft width15" >'. $user['last_browser'] .'</div>
+//                    <div class="floatleft width15" >'. $user['last_platform'] .'</div>
+//                    <div class="floatleft width5 userDelete" userId="'.$user['user_id'].'" data-name="'. $user['username'] .'" >Delete</div>
+//                    <div class="clear"></div>
+//                </div>
+//                    ';
+//            }
+//            echo '</div>';
             ?>
         </div>
     </div>

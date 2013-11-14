@@ -110,7 +110,7 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
                         <td>'.$event['start_date'] .'</td>
                         <td>'.$event['start_time'] .'</td>
                         <td>'.$event['end_time'] .'</td>
-                        <td class="data eventDelete" eventId="'. $event['event_id'].'" data-name="'. $event['name'] .'" >Delete</td>
+                        <td class="eventDelete" eventId="'. $event['event_id'].'" data-name="'. $event['name'] .'" >Delete</td>
                     </tr>
                     ';
             }

@@ -426,15 +426,24 @@ $(document).ready(function(){
                     }
                     else{
                         createSuccessBanner('User added successfully');
-                        $('.users').append('<div class="user">'+
-                            '<div class="floatleft width20" >' +  inputs.filter('[name=username]').val() + '</div>'+
-                            '<div class="floatleft width25" >' +  inputs.filter('[name=email]').val() + '</div>'+
-                            '<div class="floatleft width10" >None</div>'+
-                            '<div class="floatleft width15" >None</div>'+
-                            '<div class="floatleft width15" >None</div>'+
-                            '<div class="floatleft width5" ></div>'+
-                            '<div class="clear"></div>'+
-                            '</div>');
+                        $('.users').append('<tr class="data user">' +
+                            '<td>' + inputs.filter('[name=username]').val() + '</td>' +
+                            '<td>' + inputs.filter('[name=email]').val() + '</td>'+
+                            '<td>None</td>'+
+                            '<td>None</td>'+
+                            '<td>None</td>'+
+                            '<td></td>'+
+                            '</tr>'
+                        );
+//                        $('.users').append('<div class="user">'+
+//                            '<div class="floatleft width20" >' +  inputs.filter('[name=username]').val() + '</div>'+
+//                            '<div class="floatleft width25" >' +  inputs.filter('[name=email]').val() + '</div>'+
+//                            '<div class="floatleft width10" >None</div>'+
+//                            '<div class="floatleft width15" >None</div>'+
+//                            '<div class="floatleft width15" >None</div>'+
+//                            '<div class="floatleft width5" ></div>'+
+//                            '<div class="clear"></div>'+
+//                            '</div>');
                         for(var i = 0; i < inputs.length; i++){
                             inputs.eq(i).val('');
                         }
@@ -468,7 +477,7 @@ $(document).ready(function(){
                     'success' : function(data, x, s){
                         if( !data['errors'] ){
                             createSuccessBanner('User has been deleted successfully!');
-                            clicked.parent('.user').slideUp(550, function(){
+                            clicked.parent().fadeOut(550, function(){
                                 $(this).remove();
                             });
                         }
@@ -566,7 +575,7 @@ $(document).ready(function(){
                         errorBox.slideDown('slow');
                     }
                     else{
-                        $('.events').prepend('<tr class="data">' +
+                        $('.events').append('<tr class="data event">' +
                             '<td>' + inputs.filter('[name=name]').val() + '</td>' +
                             '<td>' +  inputs.filter('[name=description]').val() + '</td>'+
                             '<td>' +  inputs.filter('[name=date]').val() + '</td>'+

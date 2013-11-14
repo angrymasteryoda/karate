@@ -392,35 +392,42 @@ a:hover {
 }
 #content .messages,
 #content .students,
-#content .events {
+#content .events,
+#content .users {
   width: 1080px;
 }
 #content .messages tr:nth-child(1),
 #content .students tr:nth-child(1),
-#content .events tr:nth-child(1) {
+#content .events tr:nth-child(1),
+#content .users tr:nth-child(1) {
   background: url(../img/back_table.gif) repeat-x;
   height: 27px;
   border: 1px solid #323232;
 }
 #content .messages td,
 #content .students td,
-#content .events td {
+#content .events td,
+#content .users td {
   vertical-align: middle;
 }
 #content .messages .unread,
 #content .students .unread,
-#content .events .unread {
+#content .events .unread,
+#content .users .unread {
   font-weight: bold;
 }
 #content .messages .unread,
 #content .students .unread,
 #content .events .unread,
+#content .users .unread,
 #content .messages .read,
 #content .students .read,
 #content .events .read,
+#content .users .read,
 #content .messages .data,
 #content .students .data,
-#content .events .data {
+#content .events .data,
+#content .users .data {
   height: 30px;
   background-color: #252525;
   border-bottom: 1px solid black;
@@ -428,23 +435,29 @@ a:hover {
 #content .messages .unread td:nth-child(1),
 #content .students .unread td:nth-child(1),
 #content .events .unread td:nth-child(1),
+#content .users .unread td:nth-child(1),
 #content .messages .read td:nth-child(1),
 #content .students .read td:nth-child(1),
 #content .events .read td:nth-child(1),
+#content .users .read td:nth-child(1),
 #content .messages .data td:nth-child(1),
 #content .students .data td:nth-child(1),
-#content .events .data td:nth-child(1) {
+#content .events .data td:nth-child(1),
+#content .users .data td:nth-child(1) {
   padding-left: 2px;
 }
 #content .messages .unread:hover,
 #content .students .unread:hover,
 #content .events .unread:hover,
+#content .users .unread:hover,
 #content .messages .read:hover,
 #content .students .read:hover,
 #content .events .read:hover,
+#content .users .read:hover,
 #content .messages .data:hover,
 #content .students .data:hover,
-#content .events .data:hover {
+#content .events .data:hover,
+#content .users .data:hover {
   background-color: #464646;
 }
 #footer {
