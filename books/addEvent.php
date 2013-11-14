@@ -82,7 +82,27 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
             }
 
             loadDB(DB_NAME);
-            $q = "SELECT `event_id`, `name`, `description`, `start_date`, `start_time`, `end_time` FROM `mr2358174_karate_entity_events` ORDER BY $sort $sortBy;";
+            //get record count
+            $q = "SELECT COUNT(`event_id`) FROM `mr2358174_karate_entity_events`;";
+            $r = mysql_query($q);
+            $row = mysql_fetch_array($r, MYSQL_NUM);
+            $totalRecords = $row[0];
+            echo $totalRecords;
+
+            $ipp = ( ( empty($_GET['ipp']) ) ? ( 1 ) : ( $_GET['ipp'] ) );//item per page
+            $page = ( ( empty($_GET['p']) ) ? ( 1 ) : ( $_GET['p'] ) );
+            $startingPoint = ( ( empty($_GET['sp']) ) ? ( 0 ) : ( $_GET['sp'] ) );//where we left off
+
+            if ( $totalRecords > $ipp ) {
+                $pages = ceil( $totalRecords / $ipp );
+            }
+            else{
+                $pages = 1;
+            }
+
+            //normal query
+            $q = "SELECT `event_id`, `name`, `description`, `start_date`, `start_time`, `end_time` FROM `mr2358174_karate_entity_events`
+            ORDER BY $sort $sortBy LIMIT $startingPoint, $ipp;";
             $r = mysql_query($q);
             $events = array();
             $i = 0;
@@ -115,30 +135,6 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
                     ';
             }
             echo '</table>'
-//            echo '
-//            <div class="margin20_top margin10_left margin10_right events">
-//                    <div class="floatleft width20" >Name</div>
-//                    <div class="floatleft width25" >Description</div>
-//                    <div class="floatleft width10" >Date</div>
-//                    <div class="floatleft width15" >Start time</div>
-//                    <div class="floatleft width15" >End time</div>
-//                    <div class="floatleft width15" >Delete</div>
-//                    <div class="clear"></div>
-//                ';
-//            foreach ( $events as $event ) {
-//                echo '
-//                <div class="event">
-//                    <div class="floatleft width20" >'. $event['name'] .'</div>
-//                    <div class="floatleft width25" >'. $event['description'] .'</div>
-//                    <div class="floatleft width10" >'. $event['start_date'] .'</div>
-//                    <div class="floatleft width15" >'. $event['start_time'] .'</div>
-//                    <div class="floatleft width15" >'. $event['end_time'] .'</div>
-//                    <div class="floatleft width5 eventDelete" eventId="'. $event['event_id'].'" data-name="'. $event['name'] .'" >Delete</div>
-//                    <div class="clear"></div>
-//                </div>
-//                    ';
-//            }
-//            echo '</div>';
             ?>
         </div>
     </div>
