@@ -1104,6 +1104,24 @@ $(document).ready(function(){
 /*********************************Utilities********************************/
 /**************************************************************************/
 adminHeartbeat();
+
+//make the sortable buttons print there location also
+$(document).ready(function(){
+    if( $('.sortable').length > 0){
+        var elements = $('.sortable');
+        var pos = elements.eq(0).position();
+
+        for(var i = 0; i < elements.length; i++){
+            var x = elements.eq(i).attr('href');
+            elements.eq(i).attr('href', (x + '&pos=' + pos.top));
+        }
+    }
+    var get = $_GET(location.href);
+    if( get['pos'] ){
+        $("html, body").animate({ scrollTop: get['pos'] }, 'fast');
+    }
+});
+
 $(document).ready(function(){
     if ( $('.countDown').length > 0 ) {
         var counter = $('.countDown');

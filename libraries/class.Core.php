@@ -297,18 +297,19 @@ class Core {
 
     static function sortIcons($order){
         //what if the page has a query already?
-        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $parsed = parse_url($actual_link);
-        if ( isset($parsed['query']) ) {
-            $isQuery = true;
-        }
-        else $isQuery=false;
-        return '
+        $queries = $_GET;
+
+        $queries['o'] = $order;
+        $queries['ob'] = 0;
+        $str =  '
         <div class="floatright clearfix margin15_right">
-            <a class="sortable" href="'.$actual_link . ( ($isQuery) ? ('&') : ('?') ) . 'o='. $order. '&ob=0"><img class="block" src="' .APP_URL . 'assets/img/icon_up_carrot_red.png" /></a>
-            <a class="sortable" href="'.$actual_link . ( ($isQuery) ? ('&') : ('?') ) . 'o='. $order. '&ob=1"><img class="block margin5_top" src="' .APP_URL . 'assets/img/icon_down_carrot_red.png" /></a>
+            <a class="sortable" href="?'. http_build_query($queries) .'"><img class="block" src="' .APP_URL . 'assets/img/icon_up_carrot_red.png" /></a>';
+        $queries['ob'] = 1;
+        $str .='
+            <a class="sortable" href="?'. http_build_query($queries) .'"><img class="block margin5_top" src="' .APP_URL . 'assets/img/icon_down_carrot_red.png" /></a>
         </div>
         ';
+        return $str;
     }
 
     static function getPageData($table = null, $items = 25){
@@ -353,18 +354,14 @@ class Core {
 
     static function printPageLinks($pageData = null, $canEcho = true){
         if( is_null($pageData) ){return'';}
-
-        $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $parsed = parse_url($actual_link);
-        if ( isset($parsed['query']) ) {
-            $isQuery = true;
-        }
-        else $isQuery=false;
+        $queries = $_GET;
 
         $str ='<div class="pagesLinks">';
         for ( $i = 0; $i < $pageData['pages']; $i++ ) {
             if( ($i+1) != $pageData['page']){
-                $str .= '<a href="'.$actual_link . ( ($isQuery) ? ('&') : ('?') ) . 'p='. ($i+1) .'&sp='. ($pageData['ipp'] * $i) .'">' . ($i+1) . '</a>';
+                $queries['p'] = ($i+1);
+                $queries['sp'] = ($pageData['ipp'] * $i);
+                $str .= '<a href="?'. http_build_query($queries) .'">' . ($i+1) . '</a>';
             }
             else{
                 $str .= '<a class="active">' . ($i+1) . '</a>';

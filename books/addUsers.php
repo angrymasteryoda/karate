@@ -118,7 +118,7 @@ if ($_SESSION['time'] + 10 * 60 < time()) {
                 </tr>
                     ';
             }
-            echo '</table>';
+            echo '</tbody></table>';
 //            echo '
 //            <div class="margin20_top margin10_left margin10_right users">
 //                    <div class="floatleft width20" >Username</div>
