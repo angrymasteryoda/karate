@@ -1107,8 +1107,8 @@ adminHeartbeat();
 
 //make the sortable buttons print there location also
 $(document).ready(function(){
-    if( $('.sortable').length > 0){
-        var elements = $('.sortable');
+    if( $('.sortable, .pagesLinks .pageNum').length > 0){
+        var elements = $('.sortable, .pagesLinks .pageNum');
         var pos = elements.eq(0).position();
 
         for(var i = 0; i < elements.length; i++){
@@ -1118,7 +1118,7 @@ $(document).ready(function(){
     }
     var get = $_GET(location.href);
     if( get['pos'] ){
-        $("html, body").animate({ scrollTop: get['pos'] }, 'fast');
+        $("html, body").animate({ scrollTop: get['pos'] }, 0);
     }
 });
 

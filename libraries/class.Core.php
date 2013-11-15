@@ -361,7 +361,7 @@ class Core {
             if( ($i+1) != $pageData['page']){
                 $queries['p'] = ($i+1);
                 $queries['sp'] = ($pageData['ipp'] * $i);
-                $str .= '<a href="?'. http_build_query($queries) .'">' . ($i+1) . '</a>';
+                $str .= '<a class="pageNum" href="?'. http_build_query($queries) .'">' . ($i+1) . '</a>';
             }
             else{
                 $str .= '<a class="active">' . ($i+1) . '</a>';
