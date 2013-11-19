@@ -60,7 +60,7 @@ CREATE TABLE `mr2358174_karate_entity_contact` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `read` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`contact_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,8 +69,36 @@ CREATE TABLE `mr2358174_karate_entity_contact` (
 
 LOCK TABLES `mr2358174_karate_entity_contact` WRITE;
 /*!40000 ALTER TABLE `mr2358174_karate_entity_contact` DISABLE KEYS */;
-INSERT INTO `mr2358174_karate_entity_contact` VALUES (15,'michael','r@r.r','1 (234) 567-8911','sakdhsakhsakjhdskajhd','2013-11-01 01:04:26',1),(16,'michael','r@r.r','1 (951) 320-6107 ext 6107','akshdkashdas kljd lkjsad lkj adlkajs lkadjsas kjaslkds lkhdsdsaksahdjhj ahj dsahdsa  lkahl d hldkjdsalkhj sda lha lhd d jl ads dsa d ds sad dsa  dsa da fd f d  f v  v cxklcchcjcjkhh h shj ad hdjshjs hdjs h adhj a hads','2013-11-01 23:29:37',0);
+INSERT INTO `mr2358174_karate_entity_contact` VALUES (15,'michael','r@r.r','1 (234) 567-8911','sakdhsakhsakjhdskajhd','2013-11-01 01:04:26',1),(16,'michael','r@r.r','1 (951) 320-6107 ext 6107','akshdkashdas kljd lkjsad lkj adlkajs lkadjsas kjaslkds lkhdsdsaksahdjhj ahj dsahdsa  lkahl d hldkjdsalkhj sda lha lhd d jl ads dsa d ds sad dsa  dsa da fd f d  f v  v cxklcchcjcjkhh h shj ad hdjshjs hdjs h adhj a hads','2013-11-01 23:29:37',0),(17,'michael','rishermichael@gmail.com','1 (123) 456-7890','sdksakdhsakjdhjsahdjsahdksadlasldjsalkdjslkad lksajdlskaj d','2013-11-13 17:41:34',0),(18,'angrymasteryoda','askdh@sal.s','1 (981) 238-7123','aaksdjaskndanchfoiejdkjnfs wo ir kjfhsk fkdu dskhfj sdhkfhjsdh fjkds fkjdskh fds kksjh fkjsh jds f','2013-11-14 06:52:22',0);
 /*!40000 ALTER TABLE `mr2358174_karate_entity_contact` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mr2358174_karate_entity_edit`
+--
+
+DROP TABLE IF EXISTS `mr2358174_karate_entity_edit`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mr2358174_karate_entity_edit` (
+  `edit_id` int(10) NOT NULL AUTO_INCREMENT,
+  `title` text NOT NULL,
+  `form` mediumtext,
+  `table` int(10) NOT NULL,
+  `editing_id` varchar(255) NOT NULL,
+  `allowed_parents` text NOT NULL,
+  PRIMARY KEY (`edit_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mr2358174_karate_entity_edit`
+--
+
+LOCK TABLES `mr2358174_karate_entity_edit` WRITE;
+/*!40000 ALTER TABLE `mr2358174_karate_entity_edit` DISABLE KEYS */;
+INSERT INTO `mr2358174_karate_entity_edit` VALUES (1,'Edit a Student','assets/inc/forms/editStudent.php',1,'student_id','viewStudents.php');
+/*!40000 ALTER TABLE `mr2358174_karate_entity_edit` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -88,7 +116,7 @@ CREATE TABLE `mr2358174_karate_entity_events` (
   `start_time` time DEFAULT NULL,
   `end_time` time DEFAULT NULL,
   PRIMARY KEY (`event_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +125,7 @@ CREATE TABLE `mr2358174_karate_entity_events` (
 
 LOCK TABLES `mr2358174_karate_entity_events` WRITE;
 /*!40000 ALTER TABLE `mr2358174_karate_entity_events` DISABLE KEYS */;
-INSERT INTO `mr2358174_karate_entity_events` VALUES (1,'White Belt Testing','Testing student for white belts','2013-10-19','19:00:00','20:00:00'),(10,'Test Event','1st of month','2013-10-01','01:00:00','13:00:00'),(11,'Site Presention','Show and tell for the site','2013-10-22','11:10:00','12:35:00');
+INSERT INTO `mr2358174_karate_entity_events` VALUES (1,'White Belt Testing','Testing student for white belts','2013-10-19','19:00:00','20:00:00'),(10,'Test Event','1st of month','2013-10-01','01:00:00','13:00:00'),(11,'Site Presention','Show and tell for the site','2013-10-22','11:10:00','12:35:00'),(13,'weasdasdasd','asdasdasdasdasdasdasdsadasd','2013-01-01','01:00:00','12:59:00');
 /*!40000 ALTER TABLE `mr2358174_karate_entity_events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,14 +142,17 @@ CREATE TABLE `mr2358174_karate_entity_student` (
   `age` int(3) DEFAULT NULL,
   `phone` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `past_experience` varchar(50) DEFAULT NULL,
+  `past_experience` tinyint(1) DEFAULT NULL,
   `belts` varchar(50) DEFAULT NULL,
+  `is_child` tinyint(1) DEFAULT NULL,
   `parent_name` varchar(50) DEFAULT NULL,
   `parent_cell` varchar(50) DEFAULT NULL,
   `comments` text,
   `current_belt` varchar(50) DEFAULT NULL,
+  `new` tinyint(1) DEFAULT NULL,
+  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +161,7 @@ CREATE TABLE `mr2358174_karate_entity_student` (
 
 LOCK TABLES `mr2358174_karate_entity_student` WRITE;
 /*!40000 ALTER TABLE `mr2358174_karate_entity_student` DISABLE KEYS */;
-INSERT INTO `mr2358174_karate_entity_student` VALUES (1,'michael',22,'1234567890','rishermichael@gmail.com','',NULL,NULL,NULL,'',NULL),(2,'michael',22,'1234567890','rishermichael@gmail.com','Self',NULL,NULL,NULL,'',NULL),(3,'michael',22,'1234567890','r@r.r','No',NULL,NULL,NULL,'',NULL);
+INSERT INTO `mr2358174_karate_entity_student` VALUES (1,'Michael Risher',22,'1 (213) 456-7890','rishermichael@gmail.com',0,'',0,'','','has to type out a comment',NULL,0,'2013-11-13 17:45:52'),(2,'Tyler Risher',15,'1 (123) 456-7890','tyler@mail.com',1,'black',1,'Lori Risher','1 (765) 123-0987','',NULL,1,'2013-11-13 17:46:28'),(6,'sakjd',32,'3 (456) 781-0129','r@r.r',0,'',0,'','','',NULL,1,'2013-11-14 03:16:18'),(7,'derp king',12,'1 (834) 917-2321','der@r.e',0,'',1,'herp derp','1 (982) 136-2102','',NULL,1,'2013-11-14 03:16:51');
 /*!40000 ALTER TABLE `mr2358174_karate_entity_student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,7 +209,7 @@ CREATE TABLE `mr2358174_karate_entity_users` (
   `last_browser_version` varchar(50) DEFAULT NULL,
   `last_platform` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -187,7 +218,7 @@ CREATE TABLE `mr2358174_karate_entity_users` (
 
 LOCK TABLES `mr2358174_karate_entity_users` WRITE;
 /*!40000 ALTER TABLE `mr2358174_karate_entity_users` DISABLE KEYS */;
-INSERT INTO `mr2358174_karate_entity_users` VALUES (1,'michael','b04963b95c69712d21ccc42786882bf3','2013-10-23 00:08:27','::1','rishermichael@gmail.com','Chrome','30.0.1599.101','Windows');
+INSERT INTO `mr2358174_karate_entity_users` VALUES (1,'michael','b04963b95c69712d21ccc42786882bf3','2013-11-14 21:01:06','127.0.0.1','rishermichael@gmail.com','Chrome','31.0.1650.48','Windows'),(6,'client','5fec6c40fd245a243c32b3db49013d45','2013-11-14 08:00:24','127.0.0.1','r@r.r','Chrome','30.0.1599.101','Windows');
 /*!40000 ALTER TABLE `mr2358174_karate_entity_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -214,6 +245,30 @@ LOCK TABLES `mr2358174_karate_enum_sections` WRITE;
 INSERT INTO `mr2358174_karate_enum_sections` VALUES (0,'Blocks'),(1,'Strikes and Punches'),(2,'Stances (Dachi)'),(3,'Kicks (Geri) and Foot Techniques'),(4,'Weapons'),(5,'General Terms'),(6,'Tournament Terminology');
 /*!40000 ALTER TABLE `mr2358174_karate_enum_sections` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `mr2358174_karate_enum_tables`
+--
+
+DROP TABLE IF EXISTS `mr2358174_karate_enum_tables`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mr2358174_karate_enum_tables` (
+  `table_id` int(10) NOT NULL AUTO_INCREMENT,
+  `table` varchar(255) NOT NULL,
+  PRIMARY KEY (`table_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mr2358174_karate_enum_tables`
+--
+
+LOCK TABLES `mr2358174_karate_enum_tables` WRITE;
+/*!40000 ALTER TABLE `mr2358174_karate_enum_tables` DISABLE KEYS */;
+INSERT INTO `mr2358174_karate_enum_tables` VALUES (1,'mr2358174_karate_entity_student');
+/*!40000 ALTER TABLE `mr2358174_karate_enum_tables` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -224,4 +279,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-11-07 11:10:05
+-- Dump completed on 2013-11-19 11:38:03
