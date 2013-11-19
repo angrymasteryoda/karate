@@ -124,6 +124,9 @@ function adminHeartbeat(){
 }
 
 function $_GET(url) {
+    if ( !url.matches('/?/') ) {
+        return null;
+    }
     var info = url.split("?");
     var nameValuePair = info[1].split("&");
 
