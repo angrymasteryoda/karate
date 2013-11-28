@@ -124,7 +124,10 @@ function adminHeartbeat(){
 }
 
 function $_GET(url) {
-    if ( !url.matches('/?/') ) {
+    if ( typeof url == 'undefined') {
+        url = location.href;
+    }
+    if ( !url.match(/\?/) ) {
         return null;
     }
     var info = url.split("?");

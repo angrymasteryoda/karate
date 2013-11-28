@@ -90,11 +90,11 @@ checkLogin();
                                 Message Received: <span class="messageDelete underline pointer floatright font11pt margin5_right">Delete</span>
                                 <span class="markRead underline pointer floatright font11pt margin5_right">Mark as Read</span>
                                 <br>
-                                <div class="margin5_left">
+                                <span class="margin5_left">
                                     '. $contact['message'] .'
 
 
-                                </div>
+                                </span>
                             </div>
                         </td>
                     </tr>

@@ -1103,16 +1103,16 @@ $(document).ready(function(){
 /**************************************************************************/
 /*********************************Utilities********************************/
 /**************************************************************************/
-adminHeartbeat();
 
 //make the sortable buttons print there location also
 $(document).ready(function(){
     if( $('.sortable, .pagesLinks .pageNum').length > 0){
         var elements = $('.sortable, .pagesLinks .pageNum');
-        var pos = elements.eq(0).position();
 
         for(var i = 0; i < elements.length; i++){
+            var pos = elements.eq(i).position();
             var x = elements.eq(i).attr('href');
+            x = x.replace( /\&pos=\d+/, '');
             elements.eq(i).attr('href', (x + '&pos=' + pos.top));
         }
     }
